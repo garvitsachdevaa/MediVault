@@ -1,0 +1,22 @@
+# Dependencies
+node_modules/
+
+# Environment files (keep *.env.example)
+.env
+.env.*
+!.env.example
+
+# Build output
+dist/
+build/
+coverage/
+
+# OS / editor junk
+.DS_Store
+*.log
+
+# Private progress tracker (never pushed)
+STATUS.md
+
+# Real patient data — never commit
+demo-documents/private/
