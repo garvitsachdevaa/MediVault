@@ -45,7 +45,10 @@ export const errorHandler = (err, req, res, next) => {
     message = 'Session expired, please log in again';
   }
 
-  if (statusCode >= 500) console.error(err);
+  // Log only genuinely unexpected server errors — not deliberate operational
+  // errors (e.g. a 501 "not implemented yet"), which would just be noise.
+  const isOperational = err instanceof AppError && err.isOperational;
+  if (statusCode >= 500 && !isOperational) console.error(err);
 
   const body = { error: { code, message } };
   if (details !== undefined) body.error.details = details;
