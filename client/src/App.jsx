@@ -11,10 +11,14 @@ const UiPreview = lazy(() => import('./pages/UiPreview.jsx'));
 
 function PageFallback() {
   return (
-    <div className="mx-auto max-w-3xl space-y-4 p-6">
-      <Skeleton className="h-8 w-1/2" />
-      <Skeleton className="h-40 w-full" />
-      <Skeleton className="h-40 w-full" />
+    <div className="mx-auto w-full max-w-5xl space-y-6 p-6 pt-10">
+      <Skeleton className="h-10 w-2/5" />
+      <Skeleton className="h-6 w-3/5" />
+      <div className="grid gap-5 md:grid-cols-3">
+        <Skeleton className="h-44 w-full rounded-2xl" />
+        <Skeleton className="h-44 w-full rounded-2xl" />
+        <Skeleton className="h-44 w-full rounded-2xl" />
+      </div>
     </div>
   );
 }

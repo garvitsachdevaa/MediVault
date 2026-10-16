@@ -2,12 +2,94 @@
 @tailwind components;
 @tailwind utilities;
 
-html,
-body,
-#root {
-  height: 100%;
+@layer base {
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  html {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    @apply bg-ink-50 font-sans text-ink-800 antialiased;
+    /* Inter niceties: enable contextual alternates + tabular-ish defaults and
+       optical sizing so headings and body feel typeset, not pasted. */
+    font-feature-settings: 'cv11', 'ss01', 'cv02';
+    font-optical-sizing: auto;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Calm, branded selection. */
+  ::selection {
+    background-color: rgb(168 233 223 / 0.6);
+    color: #114742;
+  }
+
+  /* Headings keep a consistent weight; colour is set per-usage so headings on
+     dark surfaces (e.g. auth panel, CTA) aren't forced dark. */
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-weight: 700;
+  }
+
+  /* Numeric data (lab values, doses) should align in columns. */
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
 }
 
-body {
-  @apply bg-slate-50 font-sans text-slate-900 antialiased;
+@layer components {
+  /* Shared, accessible focus ring used across interactive surfaces. */
+  .focus-ring {
+    @apply outline-none ring-offset-2 ring-offset-white transition focus-visible:ring-2 focus-visible:ring-accent-500/60;
+  }
+
+  /* Subtle animated sheen for skeleton placeholders. */
+  .skeleton-shimmer {
+    position: relative;
+    overflow: hidden;
+  }
+  .skeleton-shimmer::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.55),
+      transparent
+    );
+    animation: shimmer 1.6s infinite;
+  }
+
+  /* Hairline grid used as a quiet background texture on marketing surfaces. */
+  .bg-grid {
+    background-image:
+      linear-gradient(to right, rgba(25, 33, 42, 0.035) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(25, 33, 42, 0.035) 1px, transparent 1px);
+    background-size: 28px 28px;
+  }
+}
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Respect reduced-motion preferences. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
 }

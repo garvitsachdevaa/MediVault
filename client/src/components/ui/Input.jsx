@@ -5,8 +5,10 @@ export const Input = forwardRef(function Input({ className = '', invalid = false
     <input
       ref={ref}
       aria-invalid={invalid || undefined}
-      className={`w-full rounded-lg border px-3 py-2 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-accent/40 ${
-        invalid ? 'border-status-danger' : 'border-slate-300'
+      className={`h-11 w-full rounded-xl border bg-white px-3.5 text-sm text-ink-900 shadow-xs outline-none transition placeholder:text-ink-400 focus:ring-4 disabled:cursor-not-allowed disabled:bg-ink-50 disabled:text-ink-400 ${
+        invalid
+          ? 'border-status-danger focus:border-status-danger focus:ring-status-danger/15'
+          : 'border-ink-200 hover:border-ink-300 focus:border-accent-500 focus:ring-accent-500/15'
       } ${className}`}
       {...props}
     />

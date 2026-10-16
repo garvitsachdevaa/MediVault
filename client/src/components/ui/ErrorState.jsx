@@ -1,14 +1,19 @@
-import { AlertCircle } from 'lucide-react';
+import { AlertTriangle } from 'lucide-react';
 import { Button } from './Button.jsx';
 
 export function ErrorState({ message = 'Something went wrong.', onRetry }) {
   return (
-    <div className="flex flex-col items-center justify-center rounded-xl border border-status-danger-bg bg-status-danger-bg/50 p-8 text-center">
-      <AlertCircle className="h-8 w-8 text-status-danger" aria-hidden="true" />
-      <p className="mt-2 text-sm text-slate-700">{message}</p>
+    <div
+      role="alert"
+      className="flex flex-col items-center justify-center rounded-2xl border border-status-danger-border bg-status-danger-bg/60 px-6 py-10 text-center"
+    >
+      <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white shadow-xs ring-1 ring-status-danger-border">
+        <AlertTriangle className="h-5 w-5 text-status-danger" aria-hidden="true" />
+      </span>
+      <p className="mt-3 max-w-sm text-sm leading-relaxed text-ink-700">{message}</p>
       {onRetry && (
-        <Button variant="outline" className="mt-4" onClick={onRetry}>
-          Retry
+        <Button variant="outline" size="sm" className="mt-5" onClick={onRetry}>
+          Try again
         </Button>
       )}
     </div>

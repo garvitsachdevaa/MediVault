@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useId } from 'react';
 import { Modal } from './Modal.jsx';
 import { Button } from './Button.jsx';
 import { Input } from './Input.jsx';
@@ -17,6 +17,7 @@ export function ConfirmDialog({
   loading = false,
 }) {
   const [typed, setTyped] = useState('');
+  const inputId = useId();
 
   // Reset the typed value each time the dialog opens.
   useEffect(() => {
@@ -46,16 +47,18 @@ export function ConfirmDialog({
         </>
       }
     >
-      {message && <p className="text-sm text-slate-600">{message}</p>}
+      {message && <p className="text-sm leading-relaxed text-ink-600">{message}</p>}
       {requireText && (
-        <div className="mt-3 space-y-2">
-          <p className="text-sm text-slate-600">
-            Type <span className="font-semibold text-slate-900">{requireText}</span> to confirm.
-          </p>
+        <div className="mt-4 space-y-1.5">
+          <label htmlFor={inputId} className="block text-sm text-ink-600">
+            Type <span className="font-semibold text-ink-900">{requireText}</span> to confirm.
+          </label>
           <Input
+            id={inputId}
             value={typed}
             onChange={(e) => setTyped(e.target.value)}
             placeholder={requireText}
+            autoComplete="off"
             aria-label="Confirmation text"
           />
         </div>
