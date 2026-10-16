@@ -185,6 +185,33 @@ describe('profiles & access control', () => {
     expect(res.status).toBe(501);
   });
 
+  it('caregiver can update the health summary; viewer cannot', async () => {
+    const { owner, profileId } = await setup();
+    const care = await addMember(profileId, owner.token, 'care@example.com', 'caregiver');
+    const upd = await request(app)
+      .patch(`/api/profiles/${profileId}/summary`)
+      .set(auth(care.token))
+      .send({ allergies: [{ name: 'Penicillin', reaction: 'Rash' }] });
+    expect(upd.status).toBe(200);
+    expect(upd.body.profile.allergies).toHaveLength(1);
+    expect(upd.body.profile.allergies[0].name).toBe('Penicillin');
+
+    const viewer = await addMember(profileId, owner.token, 'viewer@example.com', 'viewer');
+    const blocked = await request(app)
+      .patch(`/api/profiles/${profileId}/summary`)
+      .set(auth(viewer.token))
+      .send({ allergies: [] });
+    expect(blocked.status).toBe(403);
+
+    const got = await request(app)
+      .get(`/api/profiles/${profileId}/summary`)
+      .set(auth(viewer.token));
+    expect(got.status).toBe(200);
+    expect(got.body.profile.allergies).toHaveLength(1);
+    expect(got.body.currentMedications).toEqual([]);
+    expect(got.body.keyResults).toEqual([]);
+  });
+
   it('requires auth for profile routes (401)', async () => {
     const res = await request(app).get('/api/profiles');
     expect(res.status).toBe(401);

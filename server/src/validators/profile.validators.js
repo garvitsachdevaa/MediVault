@@ -30,3 +30,23 @@ export const createInviteSchema = z.object({
 });
 
 export const updateMemberRoleSchema = z.object({ role });
+
+// Health Summary lists. Each item needs a name; the rest are optional.
+const text = z.string().trim().max(200).optional().or(z.literal(''));
+const allergyItem = z.object({ name: z.string().trim().min(1).max(120), reaction: text, notes: text });
+const conditionItem = z.object({ name: z.string().trim().min(1).max(120), since: text, notes: text });
+const immunisationItem = z.object({
+  name: z.string().trim().min(1).max(120),
+  date: optionalDate,
+  notes: text,
+});
+
+export const updateSummarySchema = z.object({
+  name: z.string().trim().min(1).max(100).optional(),
+  relation: relation.optional(),
+  dateOfBirth: optionalDate,
+  bloodGroup: z.string().trim().max(10).optional(),
+  allergies: z.array(allergyItem).optional(),
+  conditions: z.array(conditionItem).optional(),
+  immunisations: z.array(immunisationItem).optional(),
+});

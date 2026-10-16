@@ -45,6 +45,25 @@ export const deleteProfile = asyncHandler(async () => {
   );
 });
 
+// GET /api/profiles/:profileId/summary (viewer)
+export const getSummary = asyncHandler(async (req, res) => {
+  res.json({
+    profile: withRole(req.profile, req.membership.role),
+    currentMedications: [], // filled in Step 17
+    keyResults: [], // filled in Step 19
+  });
+});
+
+// PATCH /api/profiles/:profileId/summary (caregiver)
+export const updateSummary = asyncHandler(async (req, res) => {
+  const fields = ['name', 'relation', 'dateOfBirth', 'bloodGroup', 'allergies', 'conditions', 'immunisations'];
+  for (const f of fields) {
+    if (f in req.body) req.profile[f] = req.body[f];
+  }
+  await req.profile.save();
+  res.json({ profile: withRole(req.profile, req.membership.role) });
+});
+
 // GET /api/profiles/:profileId/members (viewer)
 export const getMembers = asyncHandler(async (req, res) => {
   const members = await Membership.find({ profileId: req.profile.id }).populate(
