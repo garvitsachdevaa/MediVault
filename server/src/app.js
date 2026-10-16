@@ -18,8 +18,10 @@ app.use(
   cors({
     origin(origin, callback) {
       // Allow no-origin requests (curl, health pings, same-origin) and listed clients.
-      if (!origin || clientOrigins.includes(origin)) return callback(null, true);
-      return callback(new Error(`Origin ${origin} is not allowed by CORS`));
+      const normalized = origin ? origin.replace(/\/+$/, '') : origin;
+      if (!origin || clientOrigins.includes(normalized)) return callback(null, true);
+      // Disallowed origin: block cleanly (no CORS headers) instead of throwing a 500.
+      return callback(null, false);
     },
   })
 );

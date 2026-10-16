@@ -38,6 +38,8 @@ if (!parsed.success) {
 export const env = parsed.data;
 
 // Allowed CORS origins, parsed from the comma-separated CLIENT_URL.
+// Trailing slashes are stripped so "https://x.app/" and "https://x.app" both match
+// (browsers send the Origin header without a trailing slash).
 export const clientOrigins = env.CLIENT_URL.split(',')
-  .map((o) => o.trim())
+  .map((o) => o.trim().replace(/\/+$/, ''))
   .filter(Boolean);
