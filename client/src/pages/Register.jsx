@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { User, Mail, Lock } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { AuthLayout } from '../components/layout/AuthLayout.jsx';
@@ -23,6 +23,8 @@ function validate({ name, email, password }) {
 export default function Register() {
   const { register } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const from = location.state?.from || '/app';
 
   const [form, setForm] = useState({ name: '', email: '', password: '' });
   const [errors, setErrors] = useState({});
@@ -40,7 +42,7 @@ export default function Register() {
     try {
       await register({ name: form.name.trim(), email: form.email.trim(), password: form.password });
       toast.success('Account created!');
-      navigate('/app', { replace: true });
+      navigate(from, { replace: true });
     } catch (err) {
       if (err.code === 'DUPLICATE') {
         setErrors({ email: 'That email is already in use' });
