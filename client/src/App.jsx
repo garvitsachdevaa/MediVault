@@ -1,10 +1,13 @@
 import { lazy, Suspense } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { Skeleton } from './components/ui/Skeleton.jsx';
+import { ProtectedRoute } from './components/routing/ProtectedRoute.jsx';
+import { PublicOnlyRoute } from './components/routing/PublicOnlyRoute.jsx';
 
 const Landing = lazy(() => import('./pages/Landing.jsx'));
 const Login = lazy(() => import('./pages/Login.jsx'));
 const Register = lazy(() => import('./pages/Register.jsx'));
+const AppHome = lazy(() => import('./pages/AppHome.jsx'));
 const NotFound = lazy(() => import('./pages/NotFound.jsx'));
 // Dev-only component gallery. Removed before Step 25.
 const UiPreview = lazy(() => import('./pages/UiPreview.jsx'));
@@ -28,8 +31,30 @@ export default function App() {
     <Suspense fallback={<PageFallback />}>
       <Routes>
         <Route path="/" element={<Landing />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+        <Route
+          path="/login"
+          element={
+            <PublicOnlyRoute>
+              <Login />
+            </PublicOnlyRoute>
+          }
+        />
+        <Route
+          path="/register"
+          element={
+            <PublicOnlyRoute>
+              <Register />
+            </PublicOnlyRoute>
+          }
+        />
+        <Route
+          path="/app"
+          element={
+            <ProtectedRoute>
+              <AppHome />
+            </ProtectedRoute>
+          }
+        />
         {import.meta.env.DEV && <Route path="/ui-preview" element={<UiPreview />} />}
         <Route path="*" element={<NotFound />} />
       </Routes>
