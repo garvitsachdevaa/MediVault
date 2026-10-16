@@ -2,9 +2,13 @@ import { HealthProfile } from '../models/HealthProfile.js';
 import { Membership } from '../models/Membership.js';
 import { Invite } from '../models/Invite.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
-import { AppError, NotFoundError, ForbiddenError } from '../utils/AppError.js';
+import { AppError, NotFoundError, ForbiddenError, ValidationError } from '../utils/AppError.js';
 import { generateToken, hashToken } from '../utils/secureToken.js';
 import { clientOrigins } from '../config/env.js';
+import { cloudinaryConfigured } from '../config/cloudinary.js';
+import { detectType } from '../pipeline/ingestion/detector.js';
+import { validateFile } from '../pipeline/ingestion/validator.js';
+import { uploadAvatar } from '../services/storage.js';
 
 const withRole = (profile, role) => ({ ...profile.toJSON(), role });
 
@@ -60,6 +64,23 @@ export const updateSummary = asyncHandler(async (req, res) => {
   for (const f of fields) {
     if (f in req.body) req.profile[f] = req.body[f];
   }
+  await req.profile.save();
+  res.json({ profile: withRole(req.profile, req.membership.role) });
+});
+
+// POST /api/profiles/:profileId/photo (caregiver) — upload a profile photo.
+export const uploadProfilePhoto = asyncHandler(async (req, res) => {
+  if (!cloudinaryConfigured()) {
+    throw new AppError(503, 'STORAGE_UNCONFIGURED', 'File storage is not configured yet.');
+  }
+  if (!req.file) throw new ValidationError('No file was uploaded');
+
+  const detected = await detectType(req.file.buffer);
+  if (detected.category !== 'image') throw new ValidationError('Photo must be an image');
+  await validateFile(req.file.buffer, detected);
+
+  const result = await uploadAvatar(req.file.buffer);
+  req.profile.photoUrl = result.secure_url;
   await req.profile.save();
   res.json({ profile: withRole(req.profile, req.membership.role) });
 });

@@ -1,6 +1,6 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import toast from 'react-hot-toast';
-import { ShieldAlert, Stethoscope, Syringe, Pill, Activity, Plus, Pencil, Trash2 } from 'lucide-react';
+import { ShieldAlert, Stethoscope, Syringe, Pill, Activity, Plus, Pencil, Trash2, Camera } from 'lucide-react';
 import { useProfile } from '../../context/ProfileContext.jsx';
 import { useCan } from '../../hooks/useCan.js';
 import * as profilesApi from '../../api/profiles.js';
@@ -195,7 +195,7 @@ function ListSection({ section, items, canEdit, onAdd, onEdit, onDelete }) {
 }
 
 export default function HealthSummary() {
-  const { currentProfileId } = useProfile();
+  const { currentProfileId, refresh } = useProfile();
   const canEdit = useCan('edit');
 
   const [profile, setProfile] = useState(null);
@@ -204,6 +204,8 @@ export default function HealthSummary() {
   const [editor, setEditor] = useState(null); // { section, index }
   const [deleting, setDeleting] = useState(null); // { section, index }
   const [removing, setRemoving] = useState(false);
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
+  const photoInputRef = useRef(null);
 
   const load = useCallback(async () => {
     if (!currentProfileId) return;
@@ -231,6 +233,23 @@ export default function HealthSummary() {
     const updated = await profilesApi.updateSummary(currentProfileId, { [sectionKey]: list });
     setProfile(updated);
     toast.success('Saved');
+  };
+
+  const onPhotoPick = async (e) => {
+    const file = e.target.files?.[0];
+    e.target.value = '';
+    if (!file) return;
+    setUploadingPhoto(true);
+    try {
+      const updated = await profilesApi.uploadProfilePhoto(currentProfileId, file);
+      setProfile(updated);
+      refresh(); // update the avatar in the profile switcher too
+      toast.success('Photo updated');
+    } catch (err) {
+      toast.error(err.message || 'Could not upload photo');
+    } finally {
+      setUploadingPhoto(false);
+    }
   };
 
   const deleteItem = async () => {
@@ -275,7 +294,30 @@ export default function HealthSummary() {
       <h1 className="text-2xl font-bold tracking-tight text-ink-900">Health Summary</h1>
 
       <Card className="flex items-center gap-4">
-        <Avatar name={profile.name} src={profile.photoUrl} size={64} />
+        <div className="relative shrink-0">
+          <Avatar name={profile.name} src={profile.photoUrl} size={64} />
+          {canEdit && (
+            <>
+              <input
+                ref={photoInputRef}
+                type="file"
+                accept="image/*"
+                capture="environment"
+                className="hidden"
+                onChange={onPhotoPick}
+              />
+              <button
+                type="button"
+                onClick={() => photoInputRef.current?.click()}
+                disabled={uploadingPhoto}
+                aria-label="Change photo"
+                className="absolute -bottom-1 -right-1 flex h-7 w-7 items-center justify-center rounded-full border border-ink-200 bg-white text-ink-600 shadow-sm hover:bg-ink-50 disabled:opacity-60"
+              >
+                <Camera className="h-3.5 w-3.5" />
+              </button>
+            </>
+          )}
+        </div>
         <div className="min-w-0">
           <h2 className="truncate text-xl font-bold text-ink-900">{profile.name}</h2>
           {headerLine && <p className="text-sm capitalize text-ink-500">{headerLine}</p>}

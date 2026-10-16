@@ -26,6 +26,7 @@ import { Footer } from './Footer.jsx';
 import { NAV, MOBILE_PRIMARY } from './nav.js';
 import { CreateProfileForm } from '../profiles/CreateProfileForm.jsx';
 import { AddProfileModal } from '../profiles/AddProfileModal.jsx';
+import { UploadSheet } from '../documents/UploadSheet.jsx';
 
 function ContentFallback() {
   return (
@@ -112,7 +113,7 @@ function AccountMenu() {
   );
 }
 
-function TopBar() {
+function TopBar({ onUpload }) {
   return (
     <header className="sticky top-0 z-30 flex h-16 items-center justify-between gap-3 border-b border-ink-200/70 bg-white/90 px-4 backdrop-blur md:px-6">
       <div className="flex items-center gap-3">
@@ -122,7 +123,7 @@ function TopBar() {
         <ProfileSwitcher />
       </div>
       <div className="flex items-center gap-1.5">
-        <Button variant="subtle" size="sm" onClick={() => toast('Upload is enabled in a later step')}>
+        <Button variant="subtle" size="sm" onClick={onUpload}>
           <Upload className="h-4 w-4" />
           <span className="hidden sm:inline">Upload</span>
         </Button>
@@ -238,7 +239,9 @@ function BottomNav() {
 }
 
 export function AppShell() {
-  const { loading, profiles } = useProfile();
+  const { loading, profiles, currentProfileId } = useProfile();
+  const navigate = useNavigate();
+  const [uploadOpen, setUploadOpen] = useState(false);
 
   if (loading) return <PageLoader />;
   if (profiles.length === 0) return <CreateProfileForm />;
@@ -247,7 +250,7 @@ export function AppShell() {
     <div className="flex min-h-screen bg-ink-50">
       <Sidebar />
       <div className="flex min-w-0 flex-1 flex-col">
-        <TopBar />
+        <TopBar onUpload={() => setUploadOpen(true)} />
         <main className="flex-1 px-4 pb-24 pt-5 md:px-8 md:pb-10">
           <div className="mx-auto w-full max-w-5xl">
             <Suspense fallback={<ContentFallback />}>
@@ -260,6 +263,15 @@ export function AppShell() {
         </div>
       </div>
       <BottomNav />
+      <UploadSheet
+        open={uploadOpen}
+        onClose={() => setUploadOpen(false)}
+        profileId={currentProfileId}
+        onUploaded={() => {
+          setUploadOpen(false);
+          navigate('/app/records');
+        }}
+      />
     </div>
   );
 }

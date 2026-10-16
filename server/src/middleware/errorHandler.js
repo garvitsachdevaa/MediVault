@@ -35,6 +35,13 @@ export const errorHandler = (err, req, res, next) => {
     code = 'DUPLICATE';
     message = 'That resource already exists';
     details = err.keyValue;
+  } else if (err.name === 'MulterError') {
+    statusCode = 400;
+    code = 'UPLOAD_ERROR';
+    message =
+      err.code === 'LIMIT_FILE_SIZE'
+        ? `File is larger than ${env.MAX_UPLOAD_MB} MB`
+        : 'Upload failed';
   } else if (err.name === 'JsonWebTokenError') {
     statusCode = 401;
     code = 'AUTH_ERROR';

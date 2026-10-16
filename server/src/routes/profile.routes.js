@@ -2,6 +2,8 @@ import { Router } from 'express';
 import { requireAuth } from '../middleware/auth.js';
 import { requireProfileAccess } from '../middleware/profileAccess.js';
 import { validate } from '../middleware/validate.js';
+import { uploadSingle } from '../middleware/upload.js';
+import { uploadLimiter } from '../middleware/rateLimits.js';
 import {
   createProfileSchema,
   updateProfileSchema,
@@ -9,7 +11,9 @@ import {
   createInviteSchema,
   updateMemberRoleSchema,
 } from '../validators/profile.validators.js';
+import { documentCreateSchema } from '../validators/document.validators.js';
 import * as ctrl from '../controllers/profile.controller.js';
+import * as docCtrl from '../controllers/document.controller.js';
 
 const router = Router();
 
@@ -44,6 +48,27 @@ router.post(
   requireProfileAccess('owner'),
   validate({ body: createInviteSchema }),
   ctrl.createInvite
+);
+
+// Documents (list + upload). uploadSingle (multer) runs before validate so the
+// multipart `kind` text field is available on req.body.
+router.get('/:profileId/documents', requireProfileAccess('viewer'), docCtrl.listDocuments);
+router.post(
+  '/:profileId/documents',
+  requireProfileAccess('caregiver'),
+  uploadLimiter,
+  uploadSingle,
+  validate({ body: documentCreateSchema }),
+  docCtrl.createDocument
+);
+
+// Profile photo upload.
+router.post(
+  '/:profileId/photo',
+  requireProfileAccess('caregiver'),
+  uploadLimiter,
+  uploadSingle,
+  ctrl.uploadProfilePhoto
 );
 
 export default router;

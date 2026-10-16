@@ -18,3 +18,11 @@ export const removeMember = (id, userId) =>
 
 export const createInvite = (id, data) =>
   api.post(`/profiles/${id}/invites`, data).then((r) => r.data);
+
+export const uploadProfilePhoto = (id, file) => {
+  const form = new FormData();
+  form.append('file', file);
+  return api
+    .post(`/profiles/${id}/photo`, form, { headers: { 'Content-Type': 'multipart/form-data' } })
+    .then((r) => r.data.profile);
+};
