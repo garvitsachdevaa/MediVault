@@ -1,0 +1,45 @@
+# Render Blueprint for the MediVault API server.
+# Create the service on Render from this file, then fill the secret values
+# (marked `sync: false`) in the Render dashboard. Never commit real secrets.
+services:
+  - type: web
+    name: medivault-server
+    runtime: node
+    plan: free
+    rootDir: server
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NODE_VERSION
+        value: "20"
+      - key: JWT_EXPIRES_IN
+        value: 7d
+      - key: OCR_CONFIDENCE_THRESHOLD
+        value: "65"
+      - key: REVIEW_CONFIDENCE_THRESHOLD
+        value: "0.7"
+      - key: MAX_UPLOAD_MB
+        value: "10"
+      - key: APP_TIMEZONE
+        value: Asia/Kolkata
+      # Secrets and environment-specific values — set these in the dashboard.
+      - key: MONGO_URI
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: CLIENT_URL
+        sync: false
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: GEMINI_MODEL
+        sync: false
