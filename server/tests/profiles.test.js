@@ -179,10 +179,12 @@ describe('profiles & access control', () => {
     expect(res.body.member.role).toBe('caregiver');
   });
 
-  it('delete profile returns 501 for now (owner)', async () => {
+  it('owner can delete a profile (cascade)', async () => {
     const { owner, profileId } = await setup();
     const res = await request(app).delete(`/api/profiles/${profileId}`).set(auth(owner.token));
-    expect(res.status).toBe(501);
+    expect(res.status).toBe(200);
+    const list = await request(app).get('/api/profiles').set(auth(owner.token));
+    expect(list.body.profiles.find((p) => p._id === profileId)).toBeUndefined();
   });
 
   it('caregiver can update the health summary; viewer cannot', async () => {

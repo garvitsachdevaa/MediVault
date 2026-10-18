@@ -1,6 +1,5 @@
 import { Suspense, useState } from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
-import toast from 'react-hot-toast';
 import {
   Upload,
   Bell,
@@ -27,6 +26,7 @@ import { NAV, MOBILE_PRIMARY } from './nav.js';
 import { CreateProfileForm } from '../profiles/CreateProfileForm.jsx';
 import { AddProfileModal } from '../profiles/AddProfileModal.jsx';
 import { UploadSheet } from '../documents/UploadSheet.jsx';
+import { NotificationBell } from '../notifications/NotificationBell.jsx';
 
 function ContentFallback() {
   return (
@@ -127,14 +127,7 @@ function TopBar({ onUpload }) {
           <Upload className="h-4 w-4" />
           <span className="hidden sm:inline">Upload</span>
         </Button>
-        <button
-          type="button"
-          onClick={() => toast('Notifications arrive in a later step')}
-          aria-label="Notifications"
-          className="rounded-full p-2 text-ink-500 hover:bg-ink-100"
-        >
-          <Bell className="h-5 w-5" />
-        </button>
+        <NotificationBell />
         <AccountMenu />
       </div>
     </header>

@@ -1,11 +1,12 @@
 import mongoose from 'mongoose';
-import { MongoMemoryServer } from 'mongodb-memory-server';
+import { MongoMemoryReplSet } from 'mongodb-memory-server';
 
-// In-memory MongoDB for tests that touch the database (used from Step 3 onward).
+// A single-node replica set so Mongoose transactions work in tests (standalone
+// MongoDB rejects transactions) — matching Atlas, which supports them.
 let mongod;
 
 export const connectTestDb = async () => {
-  mongod = await MongoMemoryServer.create();
+  mongod = await MongoMemoryReplSet.create({ replSet: { count: 1 } });
   await mongoose.connect(mongod.getUri());
 };
 

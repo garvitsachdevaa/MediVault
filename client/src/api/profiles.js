@@ -3,6 +3,7 @@ import api from './client.js';
 export const listProfiles = () => api.get('/profiles').then((r) => r.data.profiles);
 export const createProfile = (data) => api.post('/profiles', data).then((r) => r.data.profile);
 export const getProfile = (id) => api.get(`/profiles/${id}`).then((r) => r.data.profile);
+export const deleteProfile = (id) => api.delete(`/profiles/${id}`).then((r) => r.data);
 export const updateProfile = (id, data) =>
   api.patch(`/profiles/${id}`, data).then((r) => r.data.profile);
 

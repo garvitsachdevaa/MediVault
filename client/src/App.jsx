@@ -9,14 +9,15 @@ const Landing = lazy(() => import('./pages/Landing.jsx'));
 const Login = lazy(() => import('./pages/Login.jsx'));
 const Register = lazy(() => import('./pages/Register.jsx'));
 const AcceptInvite = lazy(() => import('./pages/AcceptInvite.jsx'));
+const ReviewPage = lazy(() => import('./pages/ReviewPage.jsx'));
+const DoctorView = lazy(() => import('./pages/DoctorView.jsx'));
 const NotFound = lazy(() => import('./pages/NotFound.jsx'));
-// Dev-only component gallery. Removed before Step 25.
-const UiPreview = lazy(() => import('./pages/UiPreview.jsx'));
 
 // App (logged-in) tabs.
 const Home = lazy(() => import('./pages/app/Home.jsx'));
 const HealthSummary = lazy(() => import('./pages/app/HealthSummary.jsx'));
 const Records = lazy(() => import('./pages/app/Records.jsx'));
+const DocumentDetail = lazy(() => import('./pages/app/DocumentDetail.jsx'));
 const Medicines = lazy(() => import('./pages/app/Medicines.jsx'));
 const Results = lazy(() => import('./pages/app/Results.jsx'));
 const Visits = lazy(() => import('./pages/app/Visits.jsx'));
@@ -60,6 +61,16 @@ export default function App() {
           }
         />
         <Route path="/invite/:token" element={<AcceptInvite />} />
+        <Route path="/s/:token" element={<DoctorView />} />
+
+        <Route
+          path="/app/review/:id"
+          element={
+            <ProtectedRoute>
+              <ReviewPage />
+            </ProtectedRoute>
+          }
+        />
 
         <Route
           path="/app"
@@ -72,6 +83,7 @@ export default function App() {
           <Route index element={<Home />} />
           <Route path="summary" element={<HealthSummary />} />
           <Route path="records" element={<Records />} />
+          <Route path="records/documents/:id" element={<DocumentDetail />} />
           <Route path="medicines" element={<Medicines />} />
           <Route path="results" element={<Results />} />
           <Route path="visits" element={<Visits />} />
@@ -80,7 +92,6 @@ export default function App() {
           <Route path="settings" element={<Settings />} />
         </Route>
 
-        {import.meta.env.DEV && <Route path="/ui-preview" element={<UiPreview />} />}
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Suspense>

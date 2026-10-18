@@ -9,6 +9,7 @@ import { cloudinaryConfigured } from '../config/cloudinary.js';
 import { detectType } from '../pipeline/ingestion/detector.js';
 import { validateFile } from '../pipeline/ingestion/validator.js';
 import { uploadAvatar } from '../services/storage.js';
+import { deleteProfileCascade } from '../services/profileCascade.js';
 
 const withRole = (profile, role) => ({ ...profile.toJSON(), role });
 
@@ -40,13 +41,10 @@ export const updateProfile = asyncHandler(async (req, res) => {
   res.json({ profile: withRole(req.profile, req.membership.role) });
 });
 
-// DELETE /api/profiles/:profileId (owner) — full cascade is built in Step 23.
-export const deleteProfile = asyncHandler(async () => {
-  throw new AppError(
-    501,
-    'NOT_IMPLEMENTED',
-    'Profile deletion with full data cascade is implemented in a later step.'
-  );
+// DELETE /api/profiles/:profileId (owner) — permanently delete the profile + all data.
+export const deleteProfile = asyncHandler(async (req, res) => {
+  await deleteProfileCascade(req.profile.id, req.user.id);
+  res.json({ ok: true });
 });
 
 // GET /api/profiles/:profileId/summary (viewer)

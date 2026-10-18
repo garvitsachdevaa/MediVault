@@ -27,6 +27,7 @@ const documentSchema = new mongoose.Schema(
       method: { type: String, enum: ['pdf_text', 'ocr', 'vision', 'rule_fallback'] },
       ocrMeanConfidence: Number,
       rawText: String,
+      words: mongoose.Schema.Types.Mixed, // OCR words + bounding boxes (source highlighting)
       draft: mongoose.Schema.Types.Mixed,
       timings: {
         ingestMs: Number,
@@ -41,5 +42,7 @@ const documentSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+documentSchema.index({ profileId: 1, createdAt: -1 });
 
 export const Document = mongoose.model('Document', documentSchema);

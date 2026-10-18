@@ -22,6 +22,8 @@ const envSchema = z.object({
   REVIEW_CONFIDENCE_THRESHOLD: z.coerce.number().default(0.7),
   MAX_UPLOAD_MB: z.coerce.number().default(10),
   APP_TIMEZONE: z.string().default('Asia/Kolkata'),
+  // How long after a scheduled dose before it counts as "missed" (overridable for testing).
+  MISSED_WINDOW_MINUTES: z.coerce.number().default(120),
 });
 
 const parsed = envSchema.safeParse(process.env);

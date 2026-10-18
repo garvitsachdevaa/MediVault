@@ -1,7 +1,11 @@
 import { User } from '../models/User.js';
 import { signToken } from '../utils/tokens.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
-import { AuthError } from '../utils/AppError.js';
+import { AuthError, AppError, ValidationError } from '../utils/AppError.js';
+import { cloudinaryConfigured } from '../config/cloudinary.js';
+import { detectType } from '../pipeline/ingestion/detector.js';
+import { validateFile } from '../pipeline/ingestion/validator.js';
+import { uploadAvatar } from '../services/storage.js';
 
 export const register = asyncHandler(async (req, res) => {
   const { name, email, password } = req.body;
@@ -28,6 +32,18 @@ export const me = asyncHandler(async (req, res) => {
 
 export const updateMe = asyncHandler(async (req, res) => {
   req.user.name = req.body.name;
+  await req.user.save();
+  res.json({ user: req.user });
+});
+
+export const uploadMyPhoto = asyncHandler(async (req, res) => {
+  if (!cloudinaryConfigured()) throw new AppError(503, 'STORAGE_UNCONFIGURED', 'File storage is not configured yet.');
+  if (!req.file) throw new ValidationError('No file was uploaded');
+  const detected = await detectType(req.file.buffer);
+  if (detected.category !== 'image') throw new ValidationError('Photo must be an image');
+  await validateFile(req.file.buffer, detected);
+  const result = await uploadAvatar(req.file.buffer);
+  req.user.photoUrl = result.secure_url;
   await req.user.save();
   res.json({ user: req.user });
 });

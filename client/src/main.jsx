@@ -5,6 +5,8 @@ import { Toaster } from 'react-hot-toast';
 import App from './App.jsx';
 import { AuthProvider } from './context/AuthContext.jsx';
 import { ProfileProvider } from './context/ProfileContext.jsx';
+import { SocketProvider } from './context/SocketContext.jsx';
+import { NotificationProvider } from './context/NotificationContext.jsx';
 import './index.css';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
@@ -12,8 +14,12 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     <BrowserRouter future={{ v7_relativeSplatPath: true }}>
       <AuthProvider>
         <ProfileProvider>
-          <App />
-          <Toaster position="top-right" toastOptions={{ duration: 4000 }} />
+          <SocketProvider>
+            <NotificationProvider>
+              <App />
+              <Toaster position="top-right" toastOptions={{ duration: 4000 }} />
+            </NotificationProvider>
+          </SocketProvider>
         </ProfileProvider>
       </AuthProvider>
     </BrowserRouter>

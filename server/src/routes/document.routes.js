@@ -8,6 +8,13 @@ const router = Router();
 router.use(requireAuth);
 
 router.get('/:id', requireDocumentAccess('viewer'), ctrl.getDocument);
+router.get('/:id/detail', requireDocumentAccess('viewer'), ctrl.getDocumentDetail);
 router.get('/:id/file-url', requireDocumentAccess('viewer'), ctrl.getDocumentFileUrl);
+router.get('/:id/review', requireDocumentAccess('viewer'), ctrl.getReview);
+router.delete('/:id', requireDocumentAccess('caregiver'), ctrl.deleteDocument);
+router.patch('/:id/draft', requireDocumentAccess('caregiver'), ctrl.updateDraft);
+router.post('/:id/confirm', requireDocumentAccess('caregiver'), ctrl.confirmDocument);
+router.post('/:id/discard', requireDocumentAccess('caregiver'), ctrl.discardDocument);
+router.post('/:id/rerun', requireDocumentAccess('caregiver'), ctrl.rerunDocument);
 
 export default router;

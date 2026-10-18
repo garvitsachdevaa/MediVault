@@ -6,3 +6,8 @@ export const login = (data) => api.post('/auth/login', data).then((r) => r.data)
 export const getMe = () => api.get('/auth/me').then((r) => r.data);
 export const updateMe = (data) => api.patch('/auth/me', data).then((r) => r.data);
 export const changePassword = (data) => api.patch('/auth/me/password', data).then((r) => r.data);
+export const uploadMyPhoto = (file) => {
+  const form = new FormData();
+  form.append('file', file);
+  return api.post('/auth/me/photo', form, { headers: { 'Content-Type': 'multipart/form-data' } }).then((r) => r.data);
+};

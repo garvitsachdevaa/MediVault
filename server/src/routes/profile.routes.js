@@ -14,6 +14,13 @@ import {
 import { documentCreateSchema } from '../validators/document.validators.js';
 import * as ctrl from '../controllers/profile.controller.js';
 import * as docCtrl from '../controllers/document.controller.js';
+import * as commentCtrl from '../controllers/comment.controller.js';
+import * as medCtrl from '../controllers/medication.controller.js';
+import * as resultCtrl from '../controllers/result.controller.js';
+import * as timelineCtrl from '../controllers/timeline.controller.js';
+import * as visitCtrl from '../controllers/visit.controller.js';
+import * as shareCtrl from '../controllers/share.controller.js';
+import * as homeCtrl from '../controllers/home.controller.js';
 
 const router = Router();
 
@@ -70,5 +77,29 @@ router.post(
   uploadSingle,
   ctrl.uploadProfilePhoto
 );
+
+// Comments (anyone with access can read + post).
+router.get('/:profileId/comments', requireProfileAccess('viewer'), commentCtrl.listComments);
+router.post('/:profileId/comments', requireProfileAccess('viewer'), commentCtrl.createComment);
+
+// Medicines & today's doses.
+router.get('/:profileId/medications', requireProfileAccess('viewer'), medCtrl.listMedications);
+router.get('/:profileId/doses/today', requireProfileAccess('viewer'), medCtrl.getTodayDoses);
+
+// Results: lab trends + home readings.
+router.get('/:profileId/results/tests', requireProfileAccess('viewer'), resultCtrl.getTests);
+router.get('/:profileId/results/series', requireProfileAccess('viewer'), resultCtrl.getSeries);
+router.post('/:profileId/results/home', requireProfileAccess('caregiver'), resultCtrl.logHomeReading);
+router.delete('/:profileId/results/home/:id', requireProfileAccess('caregiver'), resultCtrl.deleteHomeReading);
+
+router.get('/:profileId/timeline', requireProfileAccess('viewer'), timelineCtrl.getTimeline);
+
+router.get('/:profileId/visits', requireProfileAccess('viewer'), visitCtrl.listVisits);
+router.post('/:profileId/visits', requireProfileAccess('caregiver'), visitCtrl.createVisit);
+
+router.get('/:profileId/shares', requireProfileAccess('viewer'), shareCtrl.listShares);
+router.post('/:profileId/shares', requireProfileAccess('caregiver'), shareCtrl.createShare);
+
+router.get('/:profileId/home', requireProfileAccess('viewer'), homeCtrl.getHome);
 
 export default router;
