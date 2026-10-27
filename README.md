@@ -77,7 +77,7 @@ flowchart TD
 - **A human confirms everything** before it becomes health data.
 
 ## Security & privacy
-See `docs/QUALITY.md`. Highlights: per-profile role checks on every route (404 for non-members),
+Highlights: per-profile role checks on every route (404 for non-members),
 zod validation, rate limits, bcrypt passwords, JWT in a header, **private Cloudinary files with
 5-minute signed URLs**, hashed invite/share tokens, expiring+revocable share links, and admin
 sees aggregates only.
