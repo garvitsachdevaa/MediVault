@@ -16,9 +16,13 @@ export const structureDocument = async ({ kind, method, rawText, imageBase64, mi
         mimeType,
       });
       return { data, source: 'gemini' };
-    } catch {
-      /* fall through to rule-based */
+    } catch (err) {
+      // Log the reason so a misconfigured key/model is visible in server logs,
+      // then fall through to the rule-based parser (a document is never lost).
+      console.warn(`[gemini] structuring failed, using rule-based fallback: ${err?.message || err}`);
     }
+  } else {
+    console.warn('[gemini] GEMINI_API_KEY not set — using rule-based fallback');
   }
   const schema = kind === 'lab_report' ? labSchema : prescriptionSchema;
   return { data: schema.parse(ruleBased(kind, rawText || '')), source: 'rule_fallback' };
