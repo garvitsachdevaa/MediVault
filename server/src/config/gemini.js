@@ -7,4 +7,4 @@ export const geminiConfigured = () => Boolean(env.GEMINI_API_KEY);
 // to the rule-based parser.
 export const genai = geminiConfigured() ? new GoogleGenAI({ apiKey: env.GEMINI_API_KEY }) : null;
 
-export const GEMINI_MODEL = env.GEMINI_MODEL || 'gemini-2.0-flash';
+export const GEMINI_MODEL = env.GEMINI_MODEL || 'gemini-3.5-flash';
