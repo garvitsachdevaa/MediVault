@@ -17,7 +17,7 @@ You upload a prescription or a lab report. MediVault reads it, **a human reviews
 | **Live app** | https://medi-vault-green.vercel.app |
 | **API health check** | https://medivault-server-vi3c.onrender.com/api/health |
 | **Source code** | https://github.com/garvitsachdevaa/MediVault |
-| **Demo video** | `‹add your demo video link here›` |
+| **Demo video** | https://drive.google.com/drive/folders/1A3iWroSb58YVdhGD4blTDgph994U-x75?usp=sharing |
 
 ### Demo accounts
 
