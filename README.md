@@ -2,7 +2,7 @@
 
 **A patient-owned health record, built from your paper documents.**
 
-You upload a prescription or a lab report. MediVault reads it, **a human reviews and confirms it**, and only then does it become structured health data — medicines with reminders, lab trend charts, a health timeline, and secure share links for a doctor.
+You upload a prescription or a lab report. MediVault reads it, **a human reviews and confirms it**, and only then does it become structured health data - medicines with reminders, lab trend charts, a health timeline, and secure share links for a doctor.
 
 > **Core rule: nothing becomes health data until a human confirms it.** Automated reading is only a draft. A person approves every record.
 
@@ -21,11 +21,11 @@ You upload a prescription or a lab report. MediVault reads it, **a human reviews
 
 ### Demo accounts
 
-Log in with these to explore a fully loaded account — no signup needed.
+Log in with these to explore a fully loaded account - no signup needed.
 
 | Role | Email | Password | What it shows |
 |------|-------|----------|---------------|
-| **Account owner** | `demo@medivault.app` | `Demo@12345` | Two profiles — *Demo – Mom* (fully loaded) and *Demo – Dad*. Lab tests on 6-month trends, home BP/weight/sugar readings, active medicine courses with dose history, documents, past & upcoming visits, a timeline, comments, and a doctor share link. |
+| **Account owner** | `demo@medivault.app` | `Demo@12345` | Two profiles - *Demo – Mom* (fully loaded) and *Demo – Dad*. Lab tests on 6-month trends, home BP/weight/sugar readings, active medicine courses with dose history, documents, past & upcoming visits, a timeline, comments, and a doctor share link. |
 | **Caregiver** | `priya@medivault.app` | `Demo@12345` | A *caregiver* on *Demo – Mom*, to show roles and family sharing. |
 
 > Reseed this demo data any time: `cd server && npm run seed:demo -- --confirm`
@@ -34,7 +34,7 @@ Log in with these to explore a fully loaded account — no signup needed.
 
 ## ❓ The problem
 
-Most people's health history lives on paper: prescription slips, lab reports, discharge summaries — stuffed in drawers, folders, or phone photos.
+Most people's health history lives on paper: prescription slips, lab reports, discharge summaries - stuffed in drawers, folders, or phone photos.
 
 | Pain point | What it causes |
 |------------|----------------|
@@ -45,30 +45,30 @@ Most people's health history lives on paper: prescription slips, lab reports, di
 | Sharing with a new doctor means carrying a file | Slow visits, missing context |
 | Families manage health for parents & kids | No safe way to share access |
 
-Hospital portals like *MyChart* solve some of this — but they only hold **one hospital's** data, and **you don't own it**. Your health history should belong to **you**, wherever it was created.
+Hospital portals like *MyChart* solve some of this - but they only hold **one hospital's** data, and **you don't own it**. Your health history should belong to **you**, wherever it was created.
 
 ## 💡 Why MediVault
 
 MediVault turns that pile of paper into **one organised, patient-owned record**:
 
-- **You own it** — not a hospital, not a single lab.
-- **Any document works** — a photo, a scan, or a PDF from any clinic.
-- **It stays trustworthy** — automated reading only drafts a record; a human always confirms before it counts.
-- **It's shareable and safe** — invite family with roles, give a doctor a temporary, expiring link.
+- **You own it** - not a hospital, not a single lab.
+- **Any document works** - a photo, a scan, or a PDF from any clinic.
+- **It stays trustworthy** - automated reading only drafts a record; a human always confirms before it counts.
+- **It's shareable and safe** - invite family with roles, give a doctor a temporary, expiring link.
 
 ---
 
-## ✨ What the app does — features in full
+## ✨ What the app does - features in full
 
 MediVault is organised into tabs. Here is every major function.
 
-### 📄 Records — upload & review (the heart of the app)
+### 📄 Records - upload & review (the heart of the app)
 | Feature | Description |
 |---------|-------------|
 | Upload | Add a prescription or lab report as an image or PDF. |
 | Live processing | Watch real-time progress as the document is read (via live socket updates). |
 | Human review | The reading produces a **draft** marked *needs review*. You check and edit the extracted medicines / results, then **confirm**. |
-| Confirm = health data | Only on confirm does the draft become medicines, lab results, and timeline events — in a single safe transaction. |
+| Confirm = health data | Only on confirm does the draft become medicines, lab results, and timeline events - in a single safe transaction. |
 | Timeline | A chronological view of everything (uploads, visits, results). Filter by type and search. |
 | Documents grid | All files with status (processing / needs review / confirmed) and per-document detail. |
 | Comments | Family members can comment on a document. |
@@ -93,7 +93,7 @@ Allergies, conditions, and immunisations, with a patient header showing age and 
 | Trend charts | Lab values plotted over time with a **reference band**; out-of-range points highlighted. |
 | Lab vs home | Compare lab results against your own home readings. |
 | Log readings | Record BP, blood sugar, or weight yourself. |
-| Flags | In-range / out-of-range flags are computed **in our own code** by comparing values to reference ranges — never taken from the reader. |
+| Flags | In-range / out-of-range flags are computed **in our own code** by comparing values to reference ranges - never taken from the reader. |
 
 ### 🗓️ Visits
 Log appointments (past and upcoming), get a day-before reminder, and manage **doctor share links**.
@@ -102,9 +102,9 @@ Log appointments (past and upcoming), get a day-before reminder, and manage **do
 | Feature | Description |
 |---------|-------------|
 | Profiles | One account can hold multiple health profiles (e.g. Mom, Dad, a child). |
-| Roles | Each member is an **owner**, **caregiver**, or **viewer** — permissions enforced on every request. |
+| Roles | Each member is an **owner**, **caregiver**, or **viewer** - permissions enforced on every request. |
 | Invites | Invite family by email with a chosen role. |
-| Doctor share links | Generate a temporary, **expiring and revocable** link that shows a doctor a read-only summary — no login needed. |
+| Doctor share links | Generate a temporary, **expiring and revocable** link that shows a doctor a read-only summary - no login needed. |
 
 ### 🔔 Notifications
 In-app notification centre with a live bell: dose reminders, visit reminders, review-ready alerts, and comments. Browser notifications fire when the tab is hidden.
@@ -142,7 +142,7 @@ flowchart TD
 | **Detect & validate** | File type is read from the actual bytes; size, pages, and dimensions are checked. | Blocks bad or fake files before they're stored. |
 | **Route** | Text-layer PDFs skip OCR; scans/photos go to OCR. High OCR confidence → printed; low → send the image to a vision model. | Uses the cheapest reliable path per document. |
 | **Structure** | Text/image is turned into structured JSON and validated with zod. | Guarantees a clean, predictable shape. |
-| **Fallback** | On any failure (bad JSON, quota, or no key) a **rule-based parser** runs. | The document is never lost — just flagged low-confidence. |
+| **Fallback** | On any failure (bad JSON, quota, or no key) a **rule-based parser** runs. | The document is never lost - just flagged low-confidence. |
 | **Flags in our code** | Out-of-range flags come from comparing values to reference ranges in our own code. | Safety numbers are deterministic, not guessed. |
 | **Confidence score** | Per-field score from method, OCR↔text cross-check, validation, and dictionary match. Below `0.7` → flagged. | Tells the human exactly what to double-check. |
 | **Human confirm** | Nothing becomes health data until a person approves it. | The core trust guarantee. |
@@ -211,7 +211,7 @@ flowchart LR
 | Protection | How |
 |-----------|-----|
 | Access control | Per-profile role checks on **every** route; non-members get a 404 (existence is hidden). |
-| Passwords | Hashed with bcrypt — never stored in plain text. |
+| Passwords | Hashed with bcrypt - never stored in plain text. |
 | Auth | Signed JWT sent as a Bearer header. |
 | Input safety | zod validation + request sanitisation (`express-mongo-sanitize`) + helmet headers. |
 | Rate limiting | Limits on auth and general routes. |
@@ -319,7 +319,7 @@ The app runs at `http://localhost:5173` (client) and `http://localhost:5000` (AP
 | `VITE_API_URL` | API base, e.g. `http://localhost:5000/api` |
 | `VITE_SOCKET_URL` | Socket base, e.g. `http://localhost:5000` |
 
-> `.env` files are never committed — copy `.env.example` and fill in your own values.
+> `.env` files are never committed - copy `.env.example` and fill in your own values.
 
 ---
 
@@ -352,7 +352,7 @@ npm test --prefix server
 
 - Reminders fire only while the server is awake (hence the keep-alive ping) and reach people with the app open (plus a browser notification when the tab is hidden).
 - Free Cloudinary requires enabling PDF delivery; signed file URLs are download-style.
-- Handwriting accuracy varies — low-confidence fields are flagged for the human reviewer.
+- Handwriting accuracy varies - low-confidence fields are flagged for the human reviewer.
 
 ## 🔭 Future work
 
