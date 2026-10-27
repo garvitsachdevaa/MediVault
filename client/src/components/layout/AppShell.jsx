@@ -1,5 +1,6 @@
 import { Suspense, useState } from 'react';
-import { NavLink, Outlet, useNavigate } from 'react-router-dom';
+import { NavLink, Outlet, useNavigate, useLocation } from 'react-router-dom';
+import { motion, AnimatePresence } from 'motion/react';
 import {
   Upload,
   Bell,
@@ -27,6 +28,7 @@ import { CreateProfileForm } from '../profiles/CreateProfileForm.jsx';
 import { AddProfileModal } from '../profiles/AddProfileModal.jsx';
 import { UploadSheet } from '../documents/UploadSheet.jsx';
 import { NotificationBell } from '../notifications/NotificationBell.jsx';
+import { pageTransition } from '../../lib/motion.js';
 
 function ContentFallback() {
   return (
@@ -49,7 +51,7 @@ function ProfileSwitcher() {
       <Dropdown
         align="left"
         trigger={
-          <span className="flex items-center gap-2 rounded-xl border border-ink-200 bg-white px-2.5 py-1.5 hover:bg-ink-50">
+          <span className="flex items-center gap-2 rounded-xl border border-ink-200/80 bg-white/90 px-2.5 py-1.5 shadow-xs transition hover:border-accent-200 hover:bg-white hover:shadow-sm">
             <Avatar name={currentProfile?.name} src={currentProfile?.photoUrl} size={26} />
             <span className="max-w-[9rem] truncate text-sm font-semibold text-ink-800">
               {currentProfile?.name || 'Select profile'}
@@ -115,7 +117,7 @@ function AccountMenu() {
 
 function TopBar({ onUpload }) {
   return (
-    <header className="sticky top-0 z-30 flex h-16 items-center justify-between gap-3 border-b border-ink-200/70 bg-white/90 px-4 backdrop-blur md:px-6">
+    <header className="glass sticky top-0 z-30 flex h-16 items-center justify-between gap-3 border-b border-ink-200/60 px-4 shadow-[0_1px_0_0_rgba(255,255,255,0.6)_inset,0_6px_20px_-16px_rgba(25,33,42,0.25)] md:px-6">
       <div className="flex items-center gap-3">
         <span className="md:hidden">
           <LogoMark size={28} />
@@ -136,29 +138,59 @@ function TopBar({ onUpload }) {
 
 function Sidebar() {
   return (
-    <aside className="hidden w-64 shrink-0 flex-col border-r border-ink-200/70 bg-white md:flex">
-      <div className="flex h-16 items-center px-6">
+    <aside className="relative hidden w-64 shrink-0 flex-col border-r border-ink-200/60 bg-white/70 backdrop-blur-xl md:flex">
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 bg-brand-mesh opacity-60"
+      />
+      <div className="relative flex h-16 items-center px-6">
         <Logo size={28} />
       </div>
-      <nav className="flex-1 space-y-1 px-3 py-4">
+      <nav className="relative flex-1 space-y-1 px-3 py-4">
         {NAV.map(({ to, end, label, Icon }) => (
           <NavLink
             key={to}
             to={to}
             end={end}
             className={({ isActive }) =>
-              `flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition ${
+              `group relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition duration-200 ${
                 isActive
-                  ? 'bg-accent-50 text-accent-800'
-                  : 'text-ink-600 hover:bg-ink-50 hover:text-ink-900'
+                  ? 'bg-gradient-to-r from-accent-50 to-accent-50/40 text-accent-800 shadow-sm ring-1 ring-inset ring-accent-200/70'
+                  : 'text-ink-600 hover:bg-white hover:text-ink-900 hover:shadow-xs'
               }`
             }
           >
-            <Icon className="h-5 w-5" aria-hidden="true" />
-            {label}
+            {({ isActive }) => (
+              <>
+                <span
+                  aria-hidden="true"
+                  className={`absolute left-0 top-1/2 h-6 w-1 -translate-y-1/2 rounded-r-full bg-accent-grad transition-opacity ${
+                    isActive ? 'opacity-100' : 'opacity-0'
+                  }`}
+                />
+                <span
+                  className={`flex h-8 w-8 items-center justify-center rounded-lg transition-colors ${
+                    isActive
+                      ? 'bg-white text-accent-600 shadow-xs ring-1 ring-accent-100'
+                      : 'text-ink-400 group-hover:text-accent-600'
+                  }`}
+                >
+                  <Icon className="h-5 w-5" aria-hidden="true" />
+                </span>
+                {label}
+              </>
+            )}
           </NavLink>
         ))}
       </nav>
+      <div className="relative px-3 pb-4">
+        <div className="rounded-xl border border-accent-100/80 bg-gradient-to-br from-accent-50/80 to-white p-3.5 shadow-xs">
+          <p className="text-xs font-semibold text-accent-800">You confirm everything</p>
+          <p className="mt-0.5 text-2xs leading-relaxed text-ink-500">
+            Nothing is saved to a record until you review it.
+          </p>
+        </div>
+      </div>
     </aside>
   );
 }
@@ -177,20 +209,30 @@ function BottomNav() {
 
   return (
     <>
-      <nav className="fixed inset-x-0 bottom-0 z-30 flex items-stretch border-t border-ink-200 bg-white md:hidden">
+      <nav className="glass fixed inset-x-0 bottom-0 z-30 flex items-stretch border-t border-ink-200 pb-[env(safe-area-inset-bottom)] md:hidden">
         {items.map(({ to, end, label, Icon }) => (
           <NavLink
             key={to}
             to={to}
             end={end}
             className={({ isActive }) =>
-              `flex flex-1 flex-col items-center gap-0.5 py-2 text-[0.7rem] font-medium ${
+              `relative flex flex-1 flex-col items-center gap-0.5 py-2 text-[0.7rem] font-medium transition-colors ${
                 isActive ? 'text-accent-700' : 'text-ink-500'
               }`
             }
           >
-            <Icon className="h-5 w-5" aria-hidden="true" />
-            {label}
+            {({ isActive }) => (
+              <>
+                <span
+                  aria-hidden="true"
+                  className={`absolute inset-x-6 top-0 h-0.5 rounded-full bg-accent-600 transition-opacity ${
+                    isActive ? 'opacity-100' : 'opacity-0'
+                  }`}
+                />
+                <Icon className="h-5 w-5" aria-hidden="true" />
+                {label}
+              </>
+            )}
           </NavLink>
         ))}
         <button
@@ -203,31 +245,69 @@ function BottomNav() {
         </button>
       </nav>
 
-      {moreOpen && (
-        <div className="fixed inset-0 z-40 md:hidden">
-          <div className="absolute inset-0 bg-black/40" onClick={() => setMoreOpen(false)} aria-hidden="true" />
-          <div className="absolute inset-x-0 bottom-0 rounded-t-2xl bg-white p-4 pb-6">
-            <div className="mx-auto mb-4 h-1 w-10 rounded-full bg-ink-200" />
-            <div className="grid grid-cols-2 gap-2">
-              {MORE_ITEMS.map(({ to, label, Icon }) => (
-                <button
-                  key={to}
-                  type="button"
-                  onClick={() => {
-                    navigate(to);
-                    setMoreOpen(false);
-                  }}
-                  className="flex items-center gap-2 rounded-xl border border-ink-200 px-3 py-3 text-sm font-medium text-ink-700 hover:bg-ink-50"
-                >
-                  <Icon className="h-5 w-5 text-ink-400" aria-hidden="true" />
-                  {label}
-                </button>
-              ))}
-            </div>
+      <AnimatePresence>
+        {moreOpen && (
+          <div className="fixed inset-0 z-40 md:hidden">
+            <motion.div
+              className="absolute inset-0 bg-black/40"
+              onClick={() => setMoreOpen(false)}
+              aria-hidden="true"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.18 }}
+            />
+            <motion.div
+              className="absolute inset-x-0 bottom-0 rounded-t-2xl bg-white p-4 pb-6"
+              initial={{ y: '100%' }}
+              animate={{ y: 0 }}
+              exit={{ y: '100%' }}
+              transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+            >
+              <div className="mx-auto mb-4 h-1 w-10 rounded-full bg-ink-200" />
+              <div className="grid grid-cols-2 gap-2">
+                {MORE_ITEMS.map(({ to, label, Icon }) => (
+                  <button
+                    key={to}
+                    type="button"
+                    onClick={() => {
+                      navigate(to);
+                      setMoreOpen(false);
+                    }}
+                    className="flex items-center gap-2 rounded-xl border border-ink-200 px-3 py-3 text-sm font-medium text-ink-700 hover:bg-ink-50"
+                  >
+                    <Icon className="h-5 w-5 text-ink-400" aria-hidden="true" />
+                    {label}
+                  </button>
+                ))}
+              </div>
+            </motion.div>
           </div>
-        </div>
-      )}
+        )}
+      </AnimatePresence>
     </>
+  );
+}
+
+// Animates the routed <Outlet/> content on each path change while the shell
+// chrome (sidebar / topbar / bottom nav) stays put. Keyed on pathname so the
+// previous page fades out and the next fades/slides in.
+function AnimatedOutlet() {
+  const location = useLocation();
+  return (
+    <AnimatePresence mode="wait" initial={false}>
+      <motion.div
+        key={location.pathname}
+        initial={pageTransition.initial}
+        animate={pageTransition.animate}
+        exit={pageTransition.exit}
+        transition={pageTransition.transition}
+      >
+        <Suspense fallback={<ContentFallback />}>
+          <Outlet />
+        </Suspense>
+      </motion.div>
+    </AnimatePresence>
   );
 }
 
@@ -242,13 +322,21 @@ export function AppShell() {
   return (
     <div className="flex min-h-screen bg-ink-50">
       <Sidebar />
-      <div className="flex min-w-0 flex-1 flex-col">
+      <div className="relative flex min-w-0 flex-1 flex-col">
         <TopBar onUpload={() => setUploadOpen(true)} />
-        <main className="flex-1 px-4 pb-24 pt-5 md:px-8 md:pb-10">
-          <div className="mx-auto w-full max-w-5xl">
-            <Suspense fallback={<ContentFallback />}>
-              <Outlet />
-            </Suspense>
+        <main className="relative flex-1 px-4 pb-24 pt-6 md:px-8 md:pb-12 md:pt-8">
+          {/* Very light editorial wash so the interior never reads as a flat
+              clinical canvas — pinned behind content, non-interactive. */}
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-x-0 top-0 h-[28rem] bg-brand-wash"
+          />
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 bg-brand-mesh opacity-50 [mask-image:radial-gradient(ellipse_80%_55%_at_50%_0%,black,transparent)]"
+          />
+          <div className="relative mx-auto w-full max-w-5xl">
+            <AnimatedOutlet />
           </div>
         </main>
         <div className="hidden md:block">

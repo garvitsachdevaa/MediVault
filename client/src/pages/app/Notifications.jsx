@@ -57,7 +57,7 @@ export default function Notifications() {
   return (
     <div className="space-y-5">
       <div className="flex items-center justify-between gap-3">
-        <h1 className="text-2xl font-bold tracking-tight text-ink-900">Notifications</h1>
+        <h1 className="font-display text-2xl font-bold tracking-tight text-ink-900">Notifications</h1>
         <Button variant="subtle" size="sm" onClick={allRead}>
           <CheckCheck className="h-4 w-4" />
           Mark all read

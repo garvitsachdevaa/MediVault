@@ -1,4 +1,6 @@
 import { CheckCircle2, AlertTriangle, XCircle, Clock, Loader2, HelpCircle } from 'lucide-react';
+import { motion } from 'motion/react';
+import { cn } from '../../lib/cn.js';
 
 // Each status shows an icon + text label + colour — never colour alone (AA).
 // Soft background, strong foreground, and a hairline border for crisp edges.
@@ -30,18 +32,26 @@ export function StatusChip({ status = 'unknown', label, size = 'md', className =
   const { Icon } = s;
   const spinning = status === 'processing';
   return (
-    <span
-      className={`inline-flex items-center whitespace-nowrap rounded-full font-semibold ring-1 ring-inset ${
-        sizes[size] || sizes.md
-      } ${s.cls} ${className}`}
+    <motion.span
+      initial={{ opacity: 0, scale: 0.85 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ type: 'spring', stiffness: 520, damping: 26, mass: 0.5 }}
+      className={cn(
+        'inline-flex items-center whitespace-nowrap rounded-full font-semibold ring-1 ring-inset',
+        sizes[size] || sizes.md,
+        s.cls,
+        className
+      )}
     >
       <Icon
-        className={`${size === 'sm' ? 'h-3 w-3' : 'h-3.5 w-3.5'} shrink-0 ${
-          spinning ? 'animate-spin' : ''
-        }`}
+        className={cn(
+          size === 'sm' ? 'h-3 w-3' : 'h-3.5 w-3.5',
+          'shrink-0',
+          spinning && 'animate-spin'
+        )}
         aria-hidden="true"
       />
       {label || s.label}
-    </span>
+    </motion.span>
   );
 }

@@ -15,6 +15,8 @@ import { ConfirmDialog } from '../../components/ui/ConfirmDialog.jsx';
 import { StatusChip } from '../../components/ui/StatusChip.jsx';
 import { Skeleton } from '../../components/ui/Skeleton.jsx';
 import { EmptyState } from '../../components/ui/EmptyState.jsx';
+import { RevealGroup, Reveal } from '../../components/ui/Reveal.jsx';
+import { PageHeader } from '../../components/ui/PageHeader.jsx';
 
 const DOSE_CHIP = { pending: 'pending', taken: 'normal', skipped: 'review', missed: 'failed' };
 
@@ -143,8 +145,12 @@ export default function Medicines() {
   };
 
   return (
-    <div className="space-y-5">
-      <h1 className="text-2xl font-bold tracking-tight text-ink-900">Medicines</h1>
+    <div className="space-y-6">
+      <PageHeader
+        eyebrow="Courses & reminders"
+        title="Medicines"
+        subtitle="Confirmed prescriptions become courses with dose reminders — track and manage them here."
+      />
 
       {tab === 'active' && <TodayDoses />}
 
@@ -163,39 +169,52 @@ export default function Medicines() {
           message="Confirm a prescription to add medicines here."
         />
       ) : (
-        <div className="grid gap-4 md:grid-cols-2">
+        <RevealGroup key={tab} className="grid gap-4 md:grid-cols-2">
           {meds.map((m) => (
-            <Card key={m._id} className="space-y-2">
-              <div className="flex items-start justify-between">
-                <div className="min-w-0">
-                  <p className="font-semibold text-ink-900">{m.name}</p>
-                  <p className="text-sm text-ink-500">{[m.strength, m.dose].filter(Boolean).join(' · ')}</p>
+            <Reveal as="div" key={m._id}>
+              <Card className="flex h-full flex-col gap-3 transition duration-200 hover:-translate-y-0.5 hover:shadow-lift">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex min-w-0 items-start gap-3">
+                    <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-accent-100 to-accent-50 text-accent-700 ring-1 ring-accent-100">
+                      <Pill className="h-5 w-5" aria-hidden="true" />
+                    </span>
+                    <div className="min-w-0">
+                      <p className="truncate font-semibold text-ink-900">{m.name}</p>
+                      <p className="truncate text-sm text-ink-500">{[m.strength, m.dose].filter(Boolean).join(' · ')}</p>
+                    </div>
+                  </div>
+                  {m.status !== 'active' && <StatusChip status="pending" label={m.status} size="sm" />}
                 </div>
-                {m.status !== 'active' && <StatusChip status="pending" label={m.status} />}
-              </div>
-              <p className="text-sm text-ink-600">{medsApi.FREQ_WORDS[m.frequencyCode] || m.frequencyCode}</p>
-              {!m.asNeeded && m.timesOfDay?.length > 0 && (
-                <p className="flex items-center gap-1.5 text-sm text-ink-500">
-                  <Clock className="h-4 w-4" /> {m.timesOfDay.join(', ')}
-                </p>
-              )}
-              {courseProgress(m) && <p className="text-xs font-medium text-accent-700">{courseProgress(m)}</p>}
-              <div className="flex flex-wrap gap-2 pt-1">
-                <Button variant="outline" size="sm" onClick={() => setHistoryMed(m)}>History</Button>
-                {canManage && m.status === 'active' && (
-                  <>
-                    <Button variant="outline" size="sm" onClick={() => setEditMed(m)}>
-                      <Pencil className="h-4 w-4" /> Times
-                    </Button>
-                    <Button variant="outline" size="sm" onClick={() => setStopMed(m)}>
-                      <StopCircle className="h-4 w-4" /> Stop
-                    </Button>
-                  </>
-                )}
-              </div>
-            </Card>
+                <div className="space-y-1.5 border-t border-ink-100 pt-3">
+                  <p className="text-sm font-medium text-ink-700">{medsApi.FREQ_WORDS[m.frequencyCode] || m.frequencyCode}</p>
+                  {!m.asNeeded && m.timesOfDay?.length > 0 && (
+                    <p className="flex items-center gap-1.5 text-sm text-ink-500">
+                      <Clock className="h-4 w-4 text-ink-400" /> {m.timesOfDay.join(', ')}
+                    </p>
+                  )}
+                  {courseProgress(m) && (
+                    <p className="inline-flex items-center rounded-full bg-accent-50 px-2.5 py-0.5 text-xs font-semibold text-accent-700 ring-1 ring-inset ring-accent-100">
+                      {courseProgress(m)}
+                    </p>
+                  )}
+                </div>
+                <div className="mt-auto flex flex-wrap gap-2 pt-1">
+                  <Button variant="outline" size="sm" onClick={() => setHistoryMed(m)}>History</Button>
+                  {canManage && m.status === 'active' && (
+                    <>
+                      <Button variant="outline" size="sm" onClick={() => setEditMed(m)}>
+                        <Pencil className="h-4 w-4" /> Times
+                      </Button>
+                      <Button variant="outline" size="sm" onClick={() => setStopMed(m)}>
+                        <StopCircle className="h-4 w-4" /> Stop
+                      </Button>
+                    </>
+                  )}
+                </div>
+              </Card>
+            </Reveal>
           ))}
-        </div>
+        </RevealGroup>
       )}
 
       <EditTimesModal open={!!editMed} med={editMed} onClose={() => setEditMed(null)} onSaved={load} />

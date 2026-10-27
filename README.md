@@ -8,7 +8,12 @@ medicines & reminders, lab trend charts, a health timeline, and doctor share lin
 
 - **Live app:** https://medi-vault-green.vercel.app
 - **API:** https://medivault-server-vi3c.onrender.com/api/health
-- **Demo login:** `demo@medivault.app` / `Demo@12345` (profile *Demo – Mom* — HbA1c trend, an active Metformin course, an upcoming visit)
+- **Demo login:** `demo@medivault.app` / `Demo@12345`
+  — two profiles (*Demo – Mom*, fully loaded, and *Demo – Dad*) with 10 lab tests on 6-month
+  trends, home BP/weight readings, 3 active medicine courses with dose-adherence history and
+  today's doses, documents, past + upcoming visits, a timeline, comments and a doctor share link.
+- **Family demo login:** `priya@medivault.app` / `Demo@12345` (a *caregiver* on *Demo – Mom*, to show roles/sharing)
+- Reseed this data any time with `cd server && npm run seed:demo -- --confirm`.
 
 > Not medical advice. MediVault records and organises health information only.
 

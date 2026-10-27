@@ -6,7 +6,7 @@ import { Logo } from '../brand/Logo.jsx';
 // reads as a quiet frame rather than a heavy bar.
 export function SiteHeader() {
   return (
-    <header className="sticky top-0 z-40 border-b border-ink-200/70 bg-ink-50/80 backdrop-blur-md">
+    <header className="glass sticky top-0 z-40 border-b border-ink-200/70">
       <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-6">
         <Link to="/" className="rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-accent-500/50">
           <Logo size={28} />

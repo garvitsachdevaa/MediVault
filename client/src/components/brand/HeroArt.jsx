@@ -1,3 +1,4 @@
+import { motion } from 'motion/react';
 import { Activity, FileText, ShieldCheck } from 'lucide-react';
 import { StatusChip } from '../ui/StatusChip.jsx';
 
@@ -12,8 +13,12 @@ export function HeroArt() {
       <div className="absolute -left-10 -top-8 h-56 w-56 rounded-full bg-accent-200/50 blur-3xl" />
       <div className="absolute -bottom-10 -right-6 h-52 w-52 rounded-full bg-accent-100/70 blur-3xl" />
 
-      {/* Primary record card */}
-      <div className="relative rounded-3xl border border-ink-200/70 bg-white p-6 shadow-float">
+      {/* Primary record card — floats gently for a sense of life */}
+      <motion.div
+        className="relative rounded-3xl border border-ink-200/70 bg-white p-6 shadow-float"
+        animate={{ y: [0, -10, 0] }}
+        transition={{ duration: 7, ease: 'easeInOut', repeat: Infinity }}
+      >
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-accent-50 text-accent-700 ring-1 ring-accent-100">
@@ -76,7 +81,7 @@ export function HeroArt() {
             </div>
           ))}
         </div>
-      </div>
+      </motion.div>
 
       {/* Floating confirmation badge */}
       <div className="absolute -bottom-5 -left-5 flex items-center gap-2.5 rounded-2xl border border-ink-200/70 bg-white px-3.5 py-2.5 shadow-lift animate-float">

@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
 import toast from 'react-hot-toast';
-import { Plus, Pencil, Trash2, Share2, Link as LinkIcon, Eye } from 'lucide-react';
+import { Plus, Pencil, Trash2, Share2, Link as LinkIcon, Eye, CalendarDays } from 'lucide-react';
 import { useProfile } from '../../context/ProfileContext.jsx';
 import { useCan } from '../../hooks/useCan.js';
 import * as visitsApi from '../../api/visits.js';
@@ -17,6 +17,8 @@ import { Skeleton } from '../../components/ui/Skeleton.jsx';
 import { EmptyState } from '../../components/ui/EmptyState.jsx';
 import { ConfirmDialog } from '../../components/ui/ConfirmDialog.jsx';
 import { ShareBuilder } from '../../components/shares/ShareBuilder.jsx';
+import { RevealGroup, Reveal } from '../../components/ui/Reveal.jsx';
+import { PageHeader } from '../../components/ui/PageHeader.jsx';
 
 function VisitModal({ open, visit, profileId, onClose, onSaved }) {
   const [form, setForm] = useState({});
@@ -105,26 +107,33 @@ function VisitsTab({ onPrepare }) {
   const past = visits.filter((v) => new Date(v.date).getTime() < now);
 
   const VisitCard = (v) => (
-    <Card key={v._id} className="space-y-1.5">
-      <div className="flex items-start justify-between">
-        <div>
-          <p className="font-semibold text-ink-900">{v.doctorName || 'Doctor visit'}</p>
-          <p className="text-sm text-ink-500">{[v.speciality, new Date(v.date).toLocaleDateString()].filter(Boolean).join(' · ')}</p>
-        </div>
-        {canEdit && (
-          <div className="flex gap-1">
-            <button type="button" onClick={() => setEdit(v)} className="rounded-lg p-1.5 text-ink-400 hover:bg-ink-100" aria-label="Edit"><Pencil className="h-4 w-4" /></button>
-            <button type="button" onClick={() => setDel(v)} className="rounded-lg p-1.5 text-ink-400 hover:bg-status-danger-bg hover:text-status-danger" aria-label="Delete"><Trash2 className="h-4 w-4" /></button>
+    <Reveal as="div" key={v._id}>
+      <Card className="flex h-full flex-col gap-2.5 transition duration-200 hover:-translate-y-0.5 hover:shadow-lift">
+        <div className="flex items-start justify-between gap-3">
+          <div className="flex min-w-0 items-start gap-3">
+            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-accent-100 to-accent-50 text-accent-700 ring-1 ring-accent-100">
+              <CalendarDays className="h-5 w-5" aria-hidden="true" />
+            </span>
+            <div className="min-w-0">
+              <p className="truncate font-semibold text-ink-900">{v.doctorName || 'Doctor visit'}</p>
+              <p className="truncate text-sm text-ink-500">{[v.speciality, new Date(v.date).toLocaleDateString()].filter(Boolean).join(' · ')}</p>
+            </div>
           </div>
+          {canEdit && (
+            <div className="flex shrink-0 gap-1">
+              <button type="button" onClick={() => setEdit(v)} className="rounded-lg p-1.5 text-ink-400 transition hover:bg-ink-100 hover:text-ink-700" aria-label="Edit"><Pencil className="h-4 w-4" /></button>
+              <button type="button" onClick={() => setDel(v)} className="rounded-lg p-1.5 text-ink-400 transition hover:bg-status-danger-bg hover:text-status-danger" aria-label="Delete"><Trash2 className="h-4 w-4" /></button>
+            </div>
+          )}
+        </div>
+        {v.reason && <p className="text-sm text-ink-600">{v.reason}</p>}
+        {canEdit && (
+          <Button variant="outline" size="sm" className="mt-auto self-start" onClick={() => onPrepare()}>
+            <Share2 className="h-4 w-4" /> Prepare for visit
+          </Button>
         )}
-      </div>
-      {v.reason && <p className="text-sm text-ink-600">{v.reason}</p>}
-      {canEdit && (
-        <Button variant="outline" size="sm" className="mt-1" onClick={() => onPrepare()}>
-          <Share2 className="h-4 w-4" /> Prepare for visit
-        </Button>
-      )}
-    </Card>
+      </Card>
+    </Reveal>
   );
 
   return (
@@ -141,13 +150,13 @@ function VisitsTab({ onPrepare }) {
           {upcoming.length > 0 && (
             <div className="space-y-3">
               <p className="text-xs font-semibold uppercase tracking-wide text-ink-400">Upcoming</p>
-              <div className="grid gap-4 md:grid-cols-2">{upcoming.map(VisitCard)}</div>
+              <RevealGroup className="grid gap-4 md:grid-cols-2">{upcoming.map(VisitCard)}</RevealGroup>
             </div>
           )}
           {past.length > 0 && (
             <div className="space-y-3">
               <p className="text-xs font-semibold uppercase tracking-wide text-ink-400">Past</p>
-              <div className="grid gap-4 md:grid-cols-2">{past.map(VisitCard)}</div>
+              <RevealGroup className="grid gap-4 md:grid-cols-2">{past.map(VisitCard)}</RevealGroup>
             </div>
           )}
         </>
@@ -207,24 +216,26 @@ function SharesTab({ onCreate }) {
       {shares.length === 0 ? (
         <EmptyState icon={Share2} title="No share links" message="Create an expiring, read-only link for a doctor." />
       ) : (
-        <div className="space-y-3">
+        <RevealGroup className="space-y-3">
           {shares.map((s) => (
-            <Card key={s._id} className="flex flex-wrap items-center justify-between gap-3">
-              <div>
-                <div className="flex items-center gap-2">
-                  <StatusChip status={chip[s.status]} label={s.status} />
-                  <span className="flex items-center gap-1 text-sm text-ink-500"><Eye className="h-3.5 w-3.5" /> {s.viewCount}</span>
+            <Reveal as="div" key={s._id}>
+              <Card className="flex flex-wrap items-center justify-between gap-3 transition duration-200 hover:shadow-lift">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <StatusChip status={chip[s.status]} label={s.status} />
+                    <span className="flex items-center gap-1 text-sm text-ink-500"><Eye className="h-3.5 w-3.5" /> {s.viewCount}</span>
+                  </div>
+                  <p className="mt-1 text-xs text-ink-500">
+                    Expires {new Date(s.expiresAt).toLocaleDateString()} · {s.notes?.length || 0} note(s)
+                  </p>
                 </div>
-                <p className="mt-1 text-xs text-ink-500">
-                  Expires {new Date(s.expiresAt).toLocaleDateString()} · {s.notes?.length || 0} note(s)
-                </p>
-              </div>
-              {s.status === 'active' && (
-                <Button variant="outline" size="sm" onClick={() => revoke(s._id)}>Revoke</Button>
-              )}
-            </Card>
+                {s.status === 'active' && (
+                  <Button variant="outline" size="sm" onClick={() => revoke(s._id)}>Revoke</Button>
+                )}
+              </Card>
+            </Reveal>
           ))}
-        </div>
+        </RevealGroup>
       )}
     </div>
   );
@@ -237,8 +248,12 @@ export default function Visits() {
   const [builderKey, setBuilderKey] = useState(0);
 
   return (
-    <div className="space-y-5">
-      <h1 className="text-2xl font-bold tracking-tight text-ink-900">Visits</h1>
+    <div className="space-y-6">
+      <PageHeader
+        eyebrow="Appointments & sharing"
+        title="Visits"
+        subtitle="Track appointments and create expiring, read-only summary links to share with a doctor."
+      />
       <Tabs
         tabs={[{ value: 'visits', label: 'Visits' }, { value: 'shares', label: 'Share links' }]}
         value={tab}

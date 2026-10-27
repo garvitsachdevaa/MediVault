@@ -78,6 +78,17 @@ export default {
           'Arial',
           'sans-serif',
         ],
+        // A refined display face for large headings (hero, section titles).
+        // Loaded via <link> in index.html; falls back to Inter gracefully so a
+        // slow font never blocks a confident first paint.
+        display: [
+          'Sora',
+          'Inter',
+          'system-ui',
+          '-apple-system',
+          'Segoe UI',
+          'sans-serif',
+        ],
       },
       // ── Type scale ───────────────────────────────────────────────────────
       // A considered scale with paired line-heights + tracking. Display/H1 are
@@ -103,18 +114,33 @@ export default {
         '3xl': '1.5rem', // large surfaces / hero panels
       },
       // ── Soft, layered shadows ──────────────────────────────────────────
+      // A cohesive elevation scale: each step layers a tight contact shadow
+      // with a softer ambient one. Tuned on the ink base so surfaces feel like
+      // paper lifting off a calm background rather than hard drop shadows.
       boxShadow: {
         xs: '0 1px 2px 0 rgba(25, 33, 42, 0.04)',
         sm: '0 1px 2px rgba(25, 33, 42, 0.04), 0 1px 3px rgba(25, 33, 42, 0.05)',
         card: '0 1px 2px rgba(25, 33, 42, 0.04), 0 6px 16px -8px rgba(25, 33, 42, 0.10)',
         lift: '0 2px 4px rgba(25, 33, 42, 0.05), 0 14px 30px -12px rgba(25, 33, 42, 0.18)',
         float: '0 10px 40px -12px rgba(17, 105, 96, 0.22), 0 4px 12px -6px rgba(25, 33, 42, 0.12)',
+        overlay:
+          '0 24px 60px -18px rgba(17, 71, 66, 0.28), 0 10px 24px -12px rgba(25, 33, 42, 0.22)',
         ring: '0 0 0 4px rgba(13, 131, 120, 0.14)',
         'inner-top': 'inset 0 1px 0 0 rgba(255, 255, 255, 0.6)',
+        // A warm, branded glow for primary CTAs / accent surfaces.
+        glow: '0 8px 30px -10px rgba(13, 131, 120, 0.45)',
       },
       backgroundImage: {
         'accent-sheen':
           'linear-gradient(180deg, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0) 60%)',
+        // Primary button fill: a subtle vertical gradient for tactile depth.
+        'accent-grad':
+          'linear-gradient(180deg, #17a195 0%, #0d8378 55%, #0f6960 100%)',
+        // A calm radial wash for marketing hero / auth panels.
+        'brand-wash':
+          'radial-gradient(60% 50% at 50% 0%, rgba(23,161,149,0.12) 0%, rgba(23,161,149,0) 70%)',
+        'brand-mesh':
+          'radial-gradient(40% 40% at 15% 20%, rgba(115,215,203,0.18) 0%, transparent 60%), radial-gradient(45% 45% at 85% 10%, rgba(13,131,120,0.14) 0%, transparent 60%)',
       },
       keyframes: {
         'fade-in': {
@@ -136,12 +162,33 @@ export default {
         shimmer: {
           '100%': { transform: 'translateX(100%)' },
         },
+        // Radix overlay/content enter+exit (used by Dialog/Dropdown/Select
+        // when a caller doesn't layer motion on top).
+        'overlay-in': { from: { opacity: '0' }, to: { opacity: '1' } },
+        'overlay-out': { from: { opacity: '1' }, to: { opacity: '0' } },
+        'content-in': {
+          from: { opacity: '0', transform: 'translateY(6px) scale(0.98)' },
+          to: { opacity: '1', transform: 'translateY(0) scale(1)' },
+        },
+        'content-out': {
+          from: { opacity: '1', transform: 'translateY(0) scale(1)' },
+          to: { opacity: '0', transform: 'translateY(4px) scale(0.98)' },
+        },
+        'aurora-drift': {
+          '0%, 100%': { transform: 'translate3d(0,0,0) scale(1)' },
+          '50%': { transform: 'translate3d(2%, -3%, 0) scale(1.06)' },
+        },
       },
       animation: {
         'fade-in': 'fade-in 0.35s ease-out both',
         'scale-in': 'scale-in 0.22s cubic-bezier(0.16, 1, 0.3, 1) both',
         'pulse-soft': 'pulse-soft 1.8s ease-in-out infinite',
         float: 'float 7s ease-in-out infinite',
+        'overlay-in': 'overlay-in 0.2s ease-out',
+        'overlay-out': 'overlay-out 0.15s ease-in',
+        'content-in': 'content-in 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
+        'content-out': 'content-out 0.15s ease-in',
+        'aurora-drift': 'aurora-drift 16s ease-in-out infinite',
       },
     },
   },

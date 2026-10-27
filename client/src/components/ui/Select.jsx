@@ -1,5 +1,12 @@
 import { forwardRef } from 'react';
+import { cn } from '../../lib/cn.js';
 
+// A styled native <select>. We keep it native (not a Radix listbox) on purpose:
+// every call site passes <option> children and reads `e.target.value`, and the
+// native control is fully accessible + keyboard-friendly out of the box. This
+// keeps the public API identical ({ className, invalid, children, ...props })
+// while refining the visuals to match our inputs. For a custom listbox see
+// SelectMenu below (opt-in, not a replacement).
 export const Select = forwardRef(function Select(
   { className = '', invalid = false, children, ...props },
   ref
@@ -9,11 +16,13 @@ export const Select = forwardRef(function Select(
       <select
         ref={ref}
         aria-invalid={invalid || undefined}
-        className={`h-11 w-full appearance-none rounded-xl border bg-white pl-3.5 pr-10 text-sm text-ink-900 shadow-xs outline-none transition focus:ring-4 disabled:cursor-not-allowed disabled:bg-ink-50 disabled:text-ink-400 ${
+        className={cn(
+          'h-11 w-full cursor-pointer appearance-none rounded-xl border bg-white pl-3.5 pr-10 text-sm text-ink-900 shadow-xs outline-none transition focus:ring-4 disabled:cursor-not-allowed disabled:bg-ink-50 disabled:text-ink-400',
           invalid
             ? 'border-status-danger focus:border-status-danger focus:ring-status-danger/15'
-            : 'border-ink-200 hover:border-ink-300 focus:border-accent-500 focus:ring-accent-500/15'
-        } ${className}`}
+            : 'border-ink-200 hover:border-ink-300 focus:border-accent-500 focus:ring-accent-500/15',
+          className
+        )}
         {...props}
       >
         {children}

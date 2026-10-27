@@ -1,4 +1,5 @@
 import { useState, useRef } from 'react';
+import { motion } from 'motion/react';
 import toast from 'react-hot-toast';
 import { UploadCloud, FileText } from 'lucide-react';
 import { Modal } from '../ui/Modal.jsx';
@@ -110,8 +111,18 @@ export function UploadSheet({ open, onClose, profileId, onUploaded }) {
         </button>
 
         {uploading && (
-          <div className="h-2 w-full overflow-hidden rounded-full bg-ink-100">
-            <div className="h-full bg-accent-500 transition-all" style={{ width: `${progress}%` }} />
+          <div className="relative h-2 w-full overflow-hidden rounded-full bg-ink-100">
+            <motion.div
+              className="h-full rounded-full bg-accent-500"
+              initial={false}
+              animate={{ width: `${progress}%` }}
+              transition={{ duration: 0.3, ease: 'easeOut' }}
+            />
+            <motion.div
+              className="pointer-events-none absolute inset-y-0 w-1/3 bg-gradient-to-r from-transparent via-white/70 to-transparent"
+              animate={{ x: ['-120%', '420%'] }}
+              transition={{ duration: 1.3, ease: 'easeInOut', repeat: Infinity }}
+            />
           </div>
         )}
       </div>

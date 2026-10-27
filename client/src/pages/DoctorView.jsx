@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { motion } from 'motion/react';
 import toast from 'react-hot-toast';
-import { Printer, ExternalLink } from 'lucide-react';
+import { Printer, ExternalLink, ShieldCheck } from 'lucide-react';
 import * as sharesApi from '../api/shares.js';
 import { Logo } from '../components/brand/Logo.jsx';
 import { Card } from '../components/ui/Card.jsx';
@@ -69,9 +70,15 @@ export default function DoctorView() {
   const s = data.summary;
 
   return (
-    <div className="min-h-screen bg-ink-50 py-8 print:bg-white print:py-0">
+    <div className="relative min-h-screen bg-ink-50 py-8 print:bg-white print:py-0">
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-64 bg-brand-wash no-print" aria-hidden="true" />
       <style>{`@media print { .no-print { display: none !important; } @page { margin: 1.2cm; } body { background: #fff; } }`}</style>
-      <div className="mx-auto max-w-3xl space-y-5 px-4">
+      <motion.div
+        className="relative mx-auto max-w-3xl space-y-5 px-4"
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+      >
         <div className="flex items-center justify-between">
           <Logo size={26} />
           <Button variant="outline" size="sm" onClick={() => window.print()} className="no-print">
@@ -79,13 +86,15 @@ export default function DoctorView() {
           </Button>
         </div>
 
-        <div className="rounded-xl border border-accent-200 bg-accent-50 px-4 py-2 text-sm text-accent-800 no-print">
+        <div className="flex items-center gap-2 rounded-xl border border-accent-200 bg-accent-50 px-4 py-2.5 text-sm font-medium text-accent-800 no-print">
+          <ShieldCheck className="h-4 w-4 shrink-0 text-accent-600" aria-hidden="true" />
           Shared read-only summary · expires {new Date(data.expiresAt).toLocaleDateString()}
         </div>
 
-        <Card>
-          <h1 className="text-2xl font-bold text-ink-900">{s.patient.name}</h1>
-          <p className="text-sm capitalize text-ink-500">
+        <Card className="relative overflow-hidden">
+          <div className="pointer-events-none absolute -right-12 -top-12 h-36 w-36 rounded-full bg-accent-100/60 blur-3xl no-print" />
+          <h1 className="relative font-display text-2xl font-bold text-ink-900">{s.patient.name}</h1>
+          <p className="relative text-sm capitalize text-ink-500">
             {[s.patient.relation, s.patient.age != null ? `${s.patient.age} yrs` : null, s.patient.bloodGroup].filter(Boolean).join(' · ')}
           </p>
         </Card>
@@ -171,7 +180,7 @@ export default function DoctorView() {
         <p className="pb-6 text-center text-xs text-ink-400">
           {s.notMedicalAdvice} · Generated {new Date(s.generatedAt).toLocaleString()}
         </p>
-      </div>
+      </motion.div>
     </div>
   );
 }

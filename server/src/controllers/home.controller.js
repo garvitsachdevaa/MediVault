@@ -17,11 +17,12 @@ export const getHome = asyncHandler(async (req, res) => {
   const [todayDoses, needsReview, nextVisit, recentActivity, results] = await Promise.all([
     DoseLog.find({ profileId: pid, scheduledAt: { $gte: startOfTodayIST(), $lte: endOfTodayIST() } })
       .sort({ scheduledAt: 1 })
-      .populate('medicationId', 'name dose'),
+      .populate('medicationId', 'name dose')
+      .lean(),
     Document.countDocuments({ profileId: pid, status: 'needs_review' }),
-    Visit.findOne({ profileId: pid, date: { $gte: new Date() } }).sort({ date: 1 }),
-    TimelineEvent.find({ profileId: pid }).sort({ occurredAt: -1 }).limit(5),
-    LabResult.find({ profileId: pid }).sort({ takenAt: -1 }),
+    Visit.findOne({ profileId: pid, date: { $gte: new Date() } }).sort({ date: 1 }).lean(),
+    TimelineEvent.find({ profileId: pid }).sort({ occurredAt: -1 }).limit(5).lean(),
+    LabResult.find({ profileId: pid }).sort({ takenAt: -1 }).lean(),
   ]);
 
   const seen = new Set();

@@ -12,6 +12,8 @@ import { Input } from '../../components/ui/Input.jsx';
 import { FormField } from '../../components/ui/FormField.jsx';
 import { Skeleton } from '../../components/ui/Skeleton.jsx';
 import { ConfirmDialog } from '../../components/ui/ConfirmDialog.jsx';
+import { RevealGroup, Reveal } from '../../components/ui/Reveal.jsx';
+import { PageHeader } from '../../components/ui/PageHeader.jsx';
 
 function RoleChip({ role }) {
   return (
@@ -102,21 +104,26 @@ export default function Family() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight text-ink-900">Family &amp; access</h1>
-        <p className="mt-1 text-sm text-ink-500">
-          Who can see and manage{' '}
-          <span className="font-medium text-ink-700">{currentProfile?.name}</span>&apos;s record.
-        </p>
-      </div>
+      <PageHeader
+        eyebrow="Access & sharing"
+        title="Family"
+        accent="& access"
+        subtitle={
+          <>
+            Who can see and manage{' '}
+            <span className="font-semibold text-ink-700">{currentProfile?.name}</span>&apos;s record.
+          </>
+        }
+      />
 
       <Card className="space-y-4">
         <h3 className="font-semibold text-ink-900">Members</h3>
         {members === null ? (
           <Skeleton className="h-16 w-full" />
         ) : (
-          members.map((m) => (
-            <div key={m._id} className="flex items-center gap-3">
+          <RevealGroup className="divide-y divide-ink-100">
+          {members.map((m) => (
+            <Reveal as="div" key={m._id} className="flex items-center gap-3 py-3 first:pt-0 last:pb-0">
               <Avatar name={m.user?.name} src={m.user?.photoUrl} size={40} />
               <div className="min-w-0 flex-1">
                 <p className="truncate text-sm font-semibold text-ink-900">{m.user?.name}</p>
@@ -146,8 +153,9 @@ export default function Family() {
               ) : (
                 <RoleChip role={m.role} />
               )}
-            </div>
-          ))
+            </Reveal>
+          ))}
+          </RevealGroup>
         )}
       </Card>
 

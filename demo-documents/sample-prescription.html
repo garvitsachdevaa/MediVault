@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Sample Prescription</title>
+    <style>
+      * { box-sizing: border-box; }
+      body { font-family: 'Segoe UI', Arial, sans-serif; color: #1a2b2b; margin: 0; background: #fff; }
+      .page { width: 800px; margin: 0 auto; padding: 48px 56px; }
+      .head { display: flex; justify-content: space-between; border-bottom: 3px solid #0d8378; padding-bottom: 14px; }
+      .clinic { font-size: 24px; font-weight: 800; color: #0d8378; }
+      .clinic small { display: block; font-weight: 500; color: #4e5c66; font-size: 13px; margin-top: 2px; }
+      .doc { text-align: right; font-size: 14px; }
+      .doc b { font-size: 16px; }
+      .meta { display: flex; justify-content: space-between; margin: 22px 0; font-size: 14px; }
+      .rx { font-size: 40px; color: #0d8378; font-weight: 800; margin: 10px 0 6px; }
+      table { width: 100%; border-collapse: collapse; font-size: 15px; }
+      th { text-align: left; color: #4e5c66; border-bottom: 2px solid #dde4e8; padding: 8px 6px; font-size: 13px; text-transform: uppercase; letter-spacing: .04em; }
+      td { padding: 12px 6px; border-bottom: 1px solid #eef2f4; }
+      .name { font-weight: 700; }
+      .foot { margin-top: 36px; font-size: 13px; color: #687782; }
+      .sign { margin-top: 48px; text-align: right; }
+      .sign b { display: block; border-top: 1px solid #93a3ac; padding-top: 6px; width: 220px; margin-left: auto; }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <div class="head">
+        <div class="clinic">City Diabetes & Heart Care<small>22 MG Road, Pune 411001 · Reg. No. MH-44821</small></div>
+        <div class="doc"><b>Dr. Anjali Mehta</b><br />MD (Endocrinology)</div>
+      </div>
+
+      <div class="meta">
+        <div><b>Patient:</b> Sunita Sharma · F / 57 yrs</div>
+        <div><b>Date:</b> 20 October 2026</div>
+      </div>
+
+      <div class="rx">Rx</div>
+      <table>
+        <thead>
+          <tr><th>Medicine</th><th>Dose</th><th>Frequency</th><th>Duration</th><th>Notes</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="name">Tab. Metformin 500mg</td><td>1 tablet</td><td>1-0-1</td><td>30 days</td><td>After food</td></tr>
+          <tr><td class="name">Tab. Telmisartan 40mg</td><td>1 tablet</td><td>OD</td><td>30 days</td><td>Morning</td></tr>
+          <tr><td class="name">Tab. Atorvastatin 10mg</td><td>1 tablet</td><td>HS</td><td>30 days</td><td>At bedtime</td></tr>
+          <tr><td class="name">Cap. Vitamin D3 60000 IU</td><td>1 capsule</td><td>Once weekly</td><td>8 weeks</td><td>SOS if deficient</td></tr>
+        </tbody>
+      </table>
+
+      <div class="foot">Review after 4 weeks with fasting sugar and HbA1c. Continue diet and 30 min walk daily.</div>
+      <div class="sign"><b>Dr. Anjali Mehta</b></div>
+    </div>
+  </body>
+</html>

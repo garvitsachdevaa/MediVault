@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { motion } from 'motion/react';
 import toast from 'react-hot-toast';
 import { FileText, Image as ImageIcon, Upload, FolderOpen, ExternalLink, RefreshCw } from 'lucide-react';
 import { useProfile } from '../../context/ProfileContext.jsx';
@@ -14,6 +15,8 @@ import { EmptyState } from '../../components/ui/EmptyState.jsx';
 import { ErrorState } from '../../components/ui/ErrorState.jsx';
 import { UploadSheet } from '../../components/documents/UploadSheet.jsx';
 import { TimelineView } from '../../components/records/TimelineView.jsx';
+import { RevealGroup, Reveal } from '../../components/ui/Reveal.jsx';
+import { PageHeader } from '../../components/ui/PageHeader.jsx';
 
 const CHIP = {
   uploaded: { status: 'pending', label: 'Uploaded' },
@@ -38,15 +41,15 @@ function DocCard({ doc, onView, onReview, onRetry, onOpen, canWrite }) {
   const processing = doc.status === 'processing';
 
   return (
-    <Card className="flex flex-col gap-3">
+    <Card className="flex h-full flex-col gap-3 transition duration-200 hover:-translate-y-0.5 hover:border-ink-300/80 hover:shadow-lift">
       <div className="flex items-start justify-between">
-        <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-accent-50 text-accent-700">
+        <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-accent-100 to-accent-50 text-accent-700 ring-1 ring-accent-100">
           <Icon className="h-5 w-5" aria-hidden="true" />
         </span>
-        <StatusChip status={chip.status} label={chip.label} />
+        <StatusChip status={chip.status} label={chip.label} size="sm" />
       </div>
-      <button type="button" onClick={() => onOpen(doc._id)} className="min-w-0 text-left">
-        <p className="font-medium capitalize text-ink-900 hover:text-accent-700">{doc.kind.replace('_', ' ')}</p>
+      <button type="button" onClick={() => onOpen(doc._id)} className="focus-ring min-w-0 rounded-lg text-left">
+        <p className="font-semibold capitalize text-ink-900 transition-colors hover:text-accent-700">{doc.kind.replace('_', ' ')}</p>
         <p className="truncate text-xs text-ink-500">
           {new Date(doc.createdAt).toLocaleDateString()}
           {doc.originalName ? ` · ${doc.originalName}` : ''}
@@ -56,10 +59,18 @@ function DocCard({ doc, onView, onReview, onRetry, onOpen, canWrite }) {
       {processing ? (
         <div>
           <p className="mb-1 text-xs font-medium text-ink-500">{doc._label || 'Processing…'}</p>
-          <div className="h-1.5 w-full overflow-hidden rounded-full bg-ink-100">
-            <div
-              className="h-full bg-accent-500 transition-all"
-              style={{ width: `${doc._percent || 10}%` }}
+          <div className="relative h-1.5 w-full overflow-hidden rounded-full bg-ink-100">
+            <motion.div
+              className="h-full rounded-full bg-accent-500"
+              initial={false}
+              animate={{ width: `${doc._percent || 10}%` }}
+              transition={{ duration: 0.5, ease: 'easeOut' }}
+            />
+            {/* Shimmer sweep communicates "working" even when % is static */}
+            <motion.div
+              className="pointer-events-none absolute inset-y-0 w-1/3 bg-gradient-to-r from-transparent via-white/70 to-transparent"
+              animate={{ x: ['-120%', '420%'] }}
+              transition={{ duration: 1.3, ease: 'easeInOut', repeat: Infinity }}
             />
           </div>
         </div>
@@ -80,10 +91,12 @@ function DocCard({ doc, onView, onReview, onRetry, onOpen, canWrite }) {
               Review
             </Button>
           )}
-          <Button variant="outline" size="sm" onClick={() => onView(doc._id)}>
-            <ExternalLink className="h-4 w-4" />
-            View file
-          </Button>
+          {doc.storage?.publicId && (
+            <Button variant="outline" size="sm" onClick={() => onView(doc._id)}>
+              <ExternalLink className="h-4 w-4" />
+              View file
+            </Button>
+          )}
         </div>
       )}
     </Card>
@@ -159,25 +172,29 @@ export default function Records() {
   const review = (id) => navigate(`/app/review/${id}`);
 
   return (
-    <div className="space-y-5">
-      <div className="flex items-center justify-between gap-3">
-        <h1 className="text-2xl font-bold tracking-tight text-ink-900">Records</h1>
-        {canUpload && (
-          <Button size="sm" onClick={() => setUploadOpen(true)}>
-            <Upload className="h-4 w-4" />
-            Upload
-          </Button>
-        )}
-      </div>
+    <div className="space-y-6">
+      <PageHeader
+        eyebrow="Your history"
+        title="Records"
+        subtitle="Every prescription and lab report, read and confirmed by you — laid out as a clear timeline."
+        actions={
+          canUpload ? (
+            <Button size="sm" onClick={() => setUploadOpen(true)}>
+              <Upload className="h-4 w-4" />
+              Upload
+            </Button>
+          ) : null
+        }
+      />
 
-      <div className="flex gap-1 rounded-xl bg-ink-100 p-1">
+      <div className="flex gap-1 rounded-xl border border-ink-200/70 bg-white/70 p-1 backdrop-blur-sm">
         {[{ v: 'timeline', l: 'Timeline' }, { v: 'documents', l: 'Documents' }].map((t) => (
           <button
             key={t.v}
             type="button"
             onClick={() => setView(t.v)}
-            className={`flex-1 rounded-lg px-3 py-1.5 text-sm font-medium transition ${
-              view === t.v ? 'bg-white text-ink-900 shadow-sm' : 'text-ink-500 hover:text-ink-700'
+            className={`flex-1 rounded-lg px-3 py-1.5 text-sm font-semibold transition ${
+              view === t.v ? 'bg-accent-grad text-white shadow-sm' : 'text-ink-500 hover:text-ink-800'
             }`}
           >
             {t.l}
@@ -229,19 +246,20 @@ export default function Records() {
           }
         />
       ) : (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <RevealGroup className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {docs.map((doc) => (
-            <DocCard
-              key={doc._id}
-              doc={doc}
-              onView={viewFile}
-              onReview={review}
-              onRetry={retry}
-              onOpen={(docId) => navigate(`/app/records/documents/${docId}`)}
-              canWrite={canUpload}
-            />
+            <Reveal as="div" key={doc._id}>
+              <DocCard
+                doc={doc}
+                onView={viewFile}
+                onReview={review}
+                onRetry={retry}
+                onOpen={(docId) => navigate(`/app/records/documents/${docId}`)}
+                canWrite={canUpload}
+              />
+            </Reveal>
           ))}
-        </div>
+        </RevealGroup>
       )}
       </>
       )}

@@ -22,6 +22,13 @@
     text-rendering: optimizeLegibility;
   }
 
+  /* Display headings use the Sora face with tighter tracking for a confident,
+     editorial feel. Applied opt-in via `font-display` on marketing headings. */
+  .font-display {
+    font-feature-settings: normal;
+    letter-spacing: -0.02em;
+  }
+
   /* Calm, branded selection. */
   ::selection {
     background-color: rgb(168 233 223 / 0.6);
@@ -47,6 +54,24 @@
   /* Shared, accessible focus ring used across interactive surfaces. */
   .focus-ring {
     @apply outline-none ring-offset-2 ring-offset-white transition focus-visible:ring-2 focus-visible:ring-accent-500/60;
+  }
+
+  /* Frosted-glass sticky bar: translucent surface + blur + saturate for a
+     premium, layered feel over scrolling content. */
+  .glass {
+    background-color: rgba(255, 255, 255, 0.72);
+    -webkit-backdrop-filter: saturate(180%) blur(14px);
+    backdrop-filter: saturate(180%) blur(14px);
+  }
+
+  /* A very quiet background texture for marketing / auth surfaces: fine dot
+     grid, sub-perceptual, just enough to kill flat "empty canvas" feel. */
+  .bg-dots {
+    background-image: radial-gradient(
+      rgba(25, 33, 42, 0.045) 1px,
+      transparent 1px
+    );
+    background-size: 20px 20px;
   }
 
   /* Subtle animated sheen for skeleton placeholders. */

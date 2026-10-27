@@ -1,7 +1,7 @@
 import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import { Camera } from 'lucide-react';
+import { Camera, SlidersHorizontal } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext.jsx';
 import { useProfile } from '../../context/ProfileContext.jsx';
 import { useCan } from '../../hooks/useCan.js';
@@ -13,6 +13,8 @@ import { Input } from '../../components/ui/Input.jsx';
 import { FormField } from '../../components/ui/FormField.jsx';
 import { Avatar } from '../../components/ui/Avatar.jsx';
 import { ConfirmDialog } from '../../components/ui/ConfirmDialog.jsx';
+import { PageHeader } from '../../components/ui/PageHeader.jsx';
+import { RevealGroup, Reveal } from '../../components/ui/Reveal.jsx';
 
 export default function Settings() {
   const { user, setUser } = useAuth();
@@ -88,8 +90,16 @@ export default function Settings() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold tracking-tight text-ink-900">Settings</h1>
+      <PageHeader
+        eyebrow="Profile & security"
+        icon={SlidersHorizontal}
+        title="Account"
+        accent="settings"
+        subtitle="Update your name and photo, change your password, and manage this profile's data."
+      />
 
+      <RevealGroup className="space-y-6">
+      <Reveal>
       <Card className="space-y-4">
         <h3 className="font-semibold text-ink-900">Account</h3>
         <div className="flex items-center gap-4">
@@ -114,7 +124,9 @@ export default function Settings() {
           <Button type="submit" loading={savingName}>Save</Button>
         </form>
       </Card>
+      </Reveal>
 
+      <Reveal>
       <Card className="space-y-4">
         <h3 className="font-semibold text-ink-900">Change password</h3>
         <form className="space-y-3" onSubmit={savePw}>
@@ -127,8 +139,10 @@ export default function Settings() {
           <Button type="submit" loading={savingPw}>Change password</Button>
         </form>
       </Card>
+      </Reveal>
 
       {canDelete && (
+        <Reveal>
         <Card className="space-y-3 border-status-danger-border">
           <h3 className="font-semibold text-status-danger">Danger zone</h3>
           <p className="text-sm text-ink-600">
@@ -137,7 +151,9 @@ export default function Settings() {
           </p>
           <Button variant="danger" onClick={() => setDelOpen(true)}>Delete this profile</Button>
         </Card>
+        </Reveal>
       )}
+      </RevealGroup>
 
       <ConfirmDialog
         open={delOpen}
